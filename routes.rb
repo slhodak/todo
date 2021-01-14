@@ -18,7 +18,6 @@ ROUTES = {
     res.set_header('Content-Type', 'text/plain')
     res.body = [ 'Sam' ]
     res.finish
-  end,
-
+  end
 
 }
