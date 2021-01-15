@@ -1,27 +1,39 @@
 require 'json'
+require_relative './database'
+
+db = Database.new
 
 ROUTES = {
-  'default' => ->(req, res) do
-    res.status = 400
-    res.set_header('Content-Type', 'text/plain')
-    res.body = [ 'Bad Request' ]
-    res.finish
-  end,
-  '/data' => ->(req, res) do
-    data = {
-      a: 1,
-      b: 2,
-      c: 3
-    }
-    res.status = 200
-    res.set_header('Content-Type', 'text/plain')
-    res.body = [ data.to_json ]
-    res.finish
-  end,
-  '/name' => ->(req, res) do
-    res.status = 200
-    res.set_header('Content-Type', 'text/plain')
-    res.body = [ 'Sam' ]
-    res.finish
-  end
+  'GET' => {
+    'default' => ->(req, res) do
+      res.status = 400
+      res.set_header('Content-Type', 'text/plain')
+      res.body = [ 'Bad Request' ]
+      res.finish
+    end,
+    '/all' => ->(req, res) do
+      res.status = 200
+      res.set_header('Content-Type', 'text/plain')
+      collection = db.client[:myCollection]
+      view_all = collection.find.to_a
+      res.body = [ view_all.to_json ]
+      res.finish
+    end,
+    '/today' => ->(req, res) do
+      # return today's todo list
+      res.status = 200
+      res.set_header('Content-Type', 'text/plain')
+      res.body = [ db.today ]
+      res.finish
+    end
+  },
+  'POST' => {
+    '/today' => ->(req, res) do
+      # create or update today's todo list
+      res.status = 200
+      res.set_header('Content-Type', 'text/plain')
+      res.body = [ 'Sam' ]
+      res.finish
+    end
+  }
 }

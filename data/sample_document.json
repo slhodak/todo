@@ -1,0 +1,23 @@
+{
+  "date": "1jan2020",
+  "todos": [
+    {
+      "description": "Apply for passport",
+      "rank": 1,
+      "need": true,
+      "want": false
+    },
+    {
+      "description": "Play a game",
+      "rank": 3,
+      "need": false,
+      "want": true
+    },
+    {
+      "description": "Go jogging",
+      "rank": 2,
+      "need": true,
+      "want": true
+    }
+  ]
+}
