@@ -1,6 +1,12 @@
 .list-item {
   display: flex;
-  justify-content: space-between;
-  max-width: 400px;
   background-color: rgba(183, 255, 255, 0.44);
+}
+
+.description {
+  min-width: 160px;
+}
+
+.list-item div {
+  width: 70px;
 }
