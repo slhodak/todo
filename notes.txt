@@ -2,15 +2,19 @@ routes and server
 
 require statements
 
-mongo data model / schema
+mongo data model / schema √
   key: date
   value: to-do list
 
-creating new list on load null
-getting list on load
-  collection view
-saving list on change
-creating new list at day end (4am)
+CRUD
+  creating new list on load null
+  reading list on load
+    collection view √
+  updating list on change
+    todo completion
+    ordering
+    changing description
+  creating new list at day end (4am) (see ***)
 
 server should not be stateful
   caching in front of db is separate
@@ -22,7 +26,7 @@ new list flow
 
   after 4am server will know if it the first request of a new day
     and respond with the new empty list
-  "what day is it (what time is it?)?" and "is today's list made yet?"
+  ***"what day is it (what time is it?)?" and "is today's list made yet?"
     always ask db for today's list
       if it's not there, make a blank one
 
