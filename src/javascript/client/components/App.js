@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Todo from './Todo';
 import '../style.css';
 
-class App extends React.Component {
+export default class App extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -13,16 +12,24 @@ class App extends React.Component {
     this.getToday = this.getToday.bind(this);
   }
   componentDidMount() {
-    this.getToday();
+    today = new Date(Date.now())
+    todayISODate = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`
+    this.getList(todayISODate);
   }
-  getToday() {
-    fetch('/today', {
+  getList(date) {
+    fetch(`/list?date=${date}`, {
       headers: [
         [ 'Accept', 'application/json' ]
       ]
     })
     .then(res => res.json())
-    .then(data => this.setState({ todos: data.todos }))
+    .then(data => {
+      if (data.todos) {
+        this.setState({ todos: data.todos });
+      } else {
+        throw new Error('No todos');
+      }
+    })
     .catch(err => console.error(`Error fetching today's data: ${err}`));
   }
   render() {
@@ -33,10 +40,8 @@ class App extends React.Component {
         <input type='text'></input><button>Add</button>
         <Todo item={this.headerColumn} />
         {/* newly added items go here and get the Have/Want columns, which rearrange them */}
-        {todos.map(item => <Todo item={item} />)}
+        {todos ? todos.map(item => <Todo item={item} />) : null}
       </div>
     )
   }
 }
-
-ReactDOM.render(<App />, document.getElementById('root'));

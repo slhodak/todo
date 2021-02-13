@@ -2,9 +2,9 @@ var path = require('path');
 
 module.exports = {
   mode: 'development',
-  entry: './components/App.js',
+  entry: path.resolve('./client/index.js'),
   output: {
-    path: path.join(__dirname, '..', '/public'),
+    path: path.resolve('../../../public'),
     filename: 'bundle.js'
   },
   module: {
