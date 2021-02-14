@@ -1,5 +1,5 @@
-node server setup
-mongo js setup
+node server setup √
+mongo js setup √
 define server api
 implement server api
 define db api
