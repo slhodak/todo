@@ -1,10 +1,11 @@
 const path = require('path');
+const cron = require('node-cron');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const db = new (require('./database'))();
 
-app.use('/', express.static(path.resolve('../../', 'public')));
+app.use(express.static(path.resolve('public')));
 app.use('/', bodyParser.json());
 
 app.get('/all', async (_req, res) => {
@@ -58,4 +59,15 @@ app.delete('/todo', async (req, res) => {
 
 app.listen(3000, () => {
   console.log('App listening on port 3000');
+});
+
+// every day at 4am, create an empty list for today if it does not exist.
+cron.schedule('* 4 * * *', async () => {
+  const date = new Date();
+  const todayKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  if (await db.getTodoList(todayKey) == null) {
+    console.log(`Today, ${todayKey}, has no list; creating one.`);
+    const result = await db.createList(todayKey);
+    console.log(result.result);
+  }
 });
