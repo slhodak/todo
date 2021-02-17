@@ -49,6 +49,12 @@ module.exports = class Database {
     return await this.query(async collection => await collection.updateOne(filter, update, options));
   }
 
+  async createList(dateKey) {
+    assert(dateKey.match(dateKeyRegex));
+    const list = { date: dateKey, todos: [] };
+    return await this.query(async collection => await collection.insertOne(list));
+  }
+
   async deleteList(dateKey) {
     assert(dateKey.match(dateKeyRegex));
     return await this.query(async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
