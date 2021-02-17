@@ -41,6 +41,9 @@ ethereum
     You can be confident that on-chain state will not be changed w/o consensus but, don't know how it got to that
     Don't forget about DECRYPTING the hash with saved key!
       Instead of prev day and new day as 2 keys, just do curr day and stored key. Even symm key.
+  save hash of to-do to blockchain
+      Finish the todo itself before worrying about blockchain component
+
 
 server should not be stateful
   caching in front of db is separate
