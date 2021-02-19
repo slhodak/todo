@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build-eth": "solc --combined-json abi,bin,metadata,opcodes -o build/Todo src/solidity/Todo.sol",
-    "build-frontend": "cd src/javascript && webpack",
-    "react-dev": "cd src/javascript && webpack --watch",
+    "build-frontend": "webpack",
+    "react-dev": "webpack --watch",
     "server-start": "node src/javascript/server/server.js",
     "server-dev": "nodemon src/javascript/server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -9,11 +9,11 @@ export default class App extends React.Component {
       todos: []
     }
     this.headerColumn = { rank: "Rank", description: "Description", need: "Need", want: "Want" };
-    this.getToday = this.getToday.bind(this);
+    this.getList = this.getList.bind(this);
   }
   componentDidMount() {
-    today = new Date(Date.now())
-    todayISODate = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`
+    let today = new Date(Date.now())
+    let todayISODate = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`
     this.getList(todayISODate);
   }
   getList(date) {

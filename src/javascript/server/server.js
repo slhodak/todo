@@ -5,7 +5,11 @@ const bodyParser = require('body-parser');
 const app = express();
 const db = new (require('./database'))();
 
-app.use(express.static(path.resolve('public')));
+app.use(express.static('public'));
+app.use('/', (req, _res, next) => {
+  console.log(`Request URL: ${req.originalUrl}`);
+  next();
+});
 app.use('/', bodyParser.json());
 
 app.get('/all', async (_req, res) => {
