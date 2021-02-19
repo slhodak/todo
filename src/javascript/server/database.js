@@ -38,8 +38,7 @@ module.exports = class Database {
   }
 
   async upsertTodo(todo) {
-    const date = new Date();
-    const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    const dateKey = this.getTodayKey();
     const list = await this.getTodoList(dateKey);
     console.log(list);
     const todos = list ? list.todos.concat(todo) : [ todo ];
@@ -61,8 +60,7 @@ module.exports = class Database {
   }
 
   async deleteTodo(description) {
-    const date = new Date();
-    const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    const dateKey = this.getTodayKey();
     const list = await this.getTodoList(dateKey);
     if (!list) { return "Error: no list found for today" }
 
@@ -70,6 +68,11 @@ module.exports = class Database {
     const filter = { date: dateKey };
     const update = { $set: { date: dateKey, todos: todos } };
     return await this.query(async collection => await collection.updateOne(filter, update));
+  }
+
+  getTodayKey() {
+    const date = new Date();
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
   }
 
   validateTodo(todo) {

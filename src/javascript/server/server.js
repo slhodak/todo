@@ -21,7 +21,12 @@ app.get('/list', async (req, res) => {
   try {
     const { date } = req.query;
     const list = await db.getTodoList(date);
-    res.send(list);
+    console.debug('Found list', list)
+    if (list) {
+      res.send(list);
+    } else {
+      res.send([]);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
@@ -31,8 +36,9 @@ app.get('/list', async (req, res) => {
 app.post('/todo', async (req, res) => {
   try {
     const data = req.body; // opaque
-    const result = await db.upsertTodo(data);
-    res.send(result);
+    const _result = await db.upsertTodo(data);
+    const list = await db.getTodoList(db.getTodayKey());
+    res.send(list);
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
@@ -43,7 +49,7 @@ app.delete('/list', async (req, res) => {
   try {
     const { date } = req.query;
     const result = await db.deleteList(date);
-    res.send(result);
+    res.send(list);
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
