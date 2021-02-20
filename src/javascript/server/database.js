@@ -27,6 +27,28 @@ module.exports = class Database {
     }
   }
 
+  // Todo Item Operations
+
+  async upsertTodo(newTodo) {
+    const dateKey = this.getTodayKey();
+    const list = await this.getTodoList(dateKey);
+    const { todos } = list;
+    const itemIndex = todos.findIndex(todo => todo.description === newTodo.description);
+    if (itemIndex >= 0) {
+      todos[itemIndex] = newTodo;
+    } else {
+      todos.push(newTodo);
+    }
+    const filter = { date: dateKey };
+    const upsert = { $set: { todos } };
+    const options = { upsert: true };
+    const _result = await this.query(async collection => await collection.updateOne(filter, upsert, options));
+    // console.debug('Upsert todo result', result);
+    return list;
+  }
+
+  // List Operations
+
   async getAll() {
     return await this.query(async collection => await collection.find({}).toArray());
   }
@@ -37,21 +59,12 @@ module.exports = class Database {
     return await this.query(async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
-  async upsertTodo(todo) {
-    const dateKey = this.getTodayKey();
-    const list = await this.getTodoList(dateKey);
-    console.log(list);
-    const todos = list ? list.todos.concat(todo) : [ todo ];
-    const filter = { date: dateKey };
-    const update = { $set: { date: dateKey, todos: todos } };
-    const options = { upsert: true };
-    return await this.query(async collection => await collection.updateOne(filter, update, options));
-  }
-
-  async createList(dateKey) {
+  async upsertList(dateKey) {
     assert(dateKey.match(dateKeyRegex));
-    const list = { date: dateKey, todos: [] };
-    return await this.query(async collection => await collection.insertOne(list));
+    const filter = { date: dateKey };
+    const upsert = { $set: { todos: [] } };
+    const options = { upsert: true };
+    return await this.query(async collection => await collection.updateOne(filter, upsert, options));
   }
 
   async deleteList(dateKey) {

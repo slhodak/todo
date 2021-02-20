@@ -12,6 +12,8 @@ app.use('/', (req, _res, next) => {
 });
 app.use('/', bodyParser.json());
 
+// List Operations
+
 app.get('/all', async (_req, res) => {
   const allLists = await db.getAll();  
   res.send(allLists);
@@ -21,7 +23,6 @@ app.get('/list', async (req, res) => {
   try {
     const { date } = req.query;
     const list = await db.getTodoList(date);
-    console.debug('Found list', list)
     if (list) {
       res.send(list);
     } else {
@@ -33,13 +34,11 @@ app.get('/list', async (req, res) => {
   }
 });
 
-app.post('/todo', async (req, res) => {
+app.post('/list', async (_req, res) => {
   try {
-    const data = req.body; // opaque
-    const _result = await db.upsertTodo(data);
-    const list = await db.getTodoList(db.getTodayKey());
-    res.send(list);
-  } catch (error) {
+    const result = await db.upsertList(db.getTodayKey());
+    res.send(result);
+  } catch (err) {
     console.error(error);
     res.status(500).send(error.message);
   }
@@ -49,6 +48,20 @@ app.delete('/list', async (req, res) => {
   try {
     const { date } = req.query;
     const result = await db.deleteList(date);
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+});
+
+// Todo Item Operations
+
+app.post('/todo', async (req, res) => {
+  try {
+    const data = req.body; // opaque
+    console.debug('Adding todo', data);
+    const list = await db.upsertTodo(data); // check result
     res.send(list);
   } catch (error) {
     console.error(error);
@@ -67,6 +80,8 @@ app.delete('/todo', async (req, res) => {
   }
 });
 
+// General
+
 app.listen(3000, () => {
   console.log('App listening on port 3000');
 });
@@ -77,7 +92,7 @@ cron.schedule('* 4 * * *', async () => {
   const todayKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
   if (await db.getTodoList(todayKey) == null) {
     console.log(`Today, ${todayKey}, has no list; creating one.`);
-    const result = await db.createList(todayKey);
+    const result = await db.upsertOne(todayKey);
     console.log(result.result);
   }
 });

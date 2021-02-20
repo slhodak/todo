@@ -1,12 +1,13 @@
-.list-item {
+.header-column {
   display: flex;
   background-color: rgba(183, 255, 255, 0.44);
+  font-size: large;
 }
-
-.description {
+.header-column div, .list-item div {
   min-width: 160px;
 }
 
-.list-item div {
-  width: 70px;
+.list-item {
+  display: flex;
+  background-color: rgba(183, 255, 255, 0.44);
 }

@@ -9,7 +9,8 @@ export default class App extends React.Component {
       description: '',
       need: false,
       want: false,
-      rank: 0
+      rank: 0,
+      complete: false
     };
     this.state = {
       todos: [],
@@ -19,6 +20,7 @@ export default class App extends React.Component {
     this.getList = this.getList.bind(this);
     this.handleAddChange = this.handleAddChange.bind(this);
     this.addTodo = this.addTodo.bind(this);
+    this.handleTodoChange = this.handleTodoChange.bind(this);
     this.updateList = this.updateList.bind(this);
   }
   componentDidMount() {
@@ -50,12 +52,21 @@ export default class App extends React.Component {
   }
   addTodo() {
     const { newTodo } = this.state;
+    this.upsertTodo(newTodo);
+  }
+  handleTodoChange(description, [property, value]) {
+    const { todos } = this.state;
+    let todo = todos.find(todo => todo.description === description);
+    todo[property] = value;
+    this.upsertTodo(todo);
+  }
+  upsertTodo(todo) {
     fetch('/todo', {
       method: 'POST',
       headers: [
         [ 'Content-type', 'application/json' ]
       ],
-      body: JSON.stringify(newTodo)
+      body: JSON.stringify(todo)
     })
     .then(res => {
       this.updateList(res);
@@ -81,16 +92,22 @@ export default class App extends React.Component {
         <h1>todo</h1>
         <div>
           <label htmlFor='need'>Need</label>
-          <input type='checkbox' name='need' onChange={this.handleAddChange} checked={newTodo.need ? true : false}></input>
+          <input type='checkbox' name='need' onChange={this.handleAddChange} checked={newTodo.need}></input>
           <label htmlFor='want'>Want</label>
-          <input type='checkbox' name='want' onChange={this.handleAddChange} checked={newTodo.want ? true : false}></input>
+          <input type='checkbox' name='want' onChange={this.handleAddChange} checked={newTodo.want}></input>
           <label htmlFor='description'>Description</label>
           <input type='text' name='description' onChange={this.handleAddChange} value={newTodo.description}></input>
           <button onClick={this.addTodo}>Add</button>
         </div>
-        <Todo item={this.headerColumn} />
+        <div className='header-column'>
+          <div>Rank</div>
+          <div>Description</div>
+          <div>Need</div>
+          <div>Want</div>
+          <div>Complete</div>
+        </div>
         {/* newly added items go here and get the Have/Want columns, which rearrange them */}
-        {todos ? todos.map(item => <Todo item={item} />) : null}
+        {todos ? todos.map(item => <Todo item={item} handleTodoChange={this.handleTodoChange}/>) : null}
       </div>
     )
   }
