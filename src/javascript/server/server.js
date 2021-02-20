@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const db = new (require('./database'))();
+const todoContract = new (require('./blockchain'))();
 
 app.use(express.static('public'));
 app.use('/', (req, _res, next) => {
@@ -88,6 +89,17 @@ app.delete('/list', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
+  }
+});
+
+app.post('/list/blockchain', async (req, res) => {
+  try {
+    const list = await db.getTodoList(db.getTodayKey());
+    todoContract.saveListHash(list);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
   }
 });
 

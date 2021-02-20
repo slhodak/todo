@@ -89,6 +89,10 @@ export default class App extends React.Component {
     .then(res => this.updateList(res))
     .catch(err => console.error('Error clearing list', err));
   }
+  saveHashToBlockchain() {
+    fetch('/list/blockchain', { method: 'POST' })
+    .catch(err => console.error('Error clearing list', err));
+  }
   render() {
     const { todos, newTodo } = this.state;
     return (
@@ -104,6 +108,7 @@ export default class App extends React.Component {
           <button onClick={this.addTodo}>Add</button>
         </div>
         <button onClick={this.clearToday} className='clear'>Clear</button>
+        <button onClick={this.saveHashToBlockchain} className='save-hash'>Save Hash</button>
         <div className='header-column'>
           <div>Rank</div>
           <div>Description</div>
