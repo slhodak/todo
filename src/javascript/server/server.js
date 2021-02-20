@@ -12,6 +12,31 @@ app.use('/', (req, _res, next) => {
 });
 app.use('/', bodyParser.json());
 
+// Todo Item Operations
+
+app.post('/todo', async (req, res) => {
+  try {
+    const data = req.body; // opaque
+    console.debug('Adding todo', data);
+    const list = await db.upsertTodo(data); // check result
+    res.send(list);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+});
+
+app.delete('/todo', async (req, res) => {
+  try {
+    const { description } = req.query;
+    const result = await db.deleteTodo(description);
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+});
+
 // List Operations
 
 app.get('/all', async (_req, res) => {
@@ -48,31 +73,6 @@ app.delete('/list', async (req, res) => {
   try {
     const { date } = req.query;
     const result = await db.deleteList(date);
-    res.send(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
-  }
-});
-
-// Todo Item Operations
-
-app.post('/todo', async (req, res) => {
-  try {
-    const data = req.body; // opaque
-    console.debug('Adding todo', data);
-    const list = await db.upsertTodo(data); // check result
-    res.send(list);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
-  }
-});
-
-app.delete('/todo', async (req, res) => {
-  try {
-    const { description } = req.query;
-    const result = await db.deleteTodo(description);
     res.send(result);
   } catch (error) {
     console.error(error);
