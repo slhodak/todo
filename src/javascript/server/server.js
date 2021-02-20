@@ -7,7 +7,7 @@ const db = new (require('./database'))();
 
 app.use(express.static('public'));
 app.use('/', (req, _res, next) => {
-  console.log(`Request URL: ${req.originalUrl}`);
+  console.log(`Request URL: ${req.originalUrl} | method: ${req.method}`);
   next();
 });
 app.use('/', bodyParser.json());
@@ -17,8 +17,8 @@ app.use('/', bodyParser.json());
 app.post('/todo', async (req, res) => {
   try {
     const data = req.body; // opaque
-    console.debug('Adding todo', data);
-    const list = await db.upsertTodo(data); // check result
+    console.debug('Upserting todo', data.description);
+    const list = await db.upsertTodo(data);
     res.send(list);
   } catch (error) {
     console.error(error);
@@ -29,13 +29,23 @@ app.post('/todo', async (req, res) => {
 app.delete('/todo', async (req, res) => {
   try {
     const { description } = req.query;
-    const result = await db.deleteTodo(description);
-    res.send(result);
+    const list = await db.deleteTodo(description);
+    res.send(list);
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
   }
 });
+
+app.delete('/todos', async (_req, res) => {
+  try {
+    const list = await db.deleteTodos(); // check for error
+    res.send(list);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+})
 
 // List Operations
 
@@ -72,8 +82,9 @@ app.post('/list', async (_req, res) => {
 app.delete('/list', async (req, res) => {
   try {
     const { date } = req.query;
-    const result = await db.deleteList(date);
-    res.send(result);
+    const _result = await db.deleteList(date); // check for error
+    const list = await db.getTodoList(db.getTodayKey());
+    res.send(list);
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);

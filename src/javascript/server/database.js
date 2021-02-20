@@ -16,7 +16,7 @@ module.exports = class Database {
       client = await MongoClient.connect(url, { useUnifiedTopology: true });
       assert.notStrictEqual(null, client);
       const db = client.db(this.dbName);
-      console.log(`Connected to db '${db.databaseName}'`);
+      console.log(`Connected to db '${db.databaseName}' for method '${method}'`);
       const collection = db.collection(this.collectionName);
       const result = await method(collection);
       await client.close();
@@ -42,9 +42,17 @@ module.exports = class Database {
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
-    const _result = await this.query(async collection => await collection.updateOne(filter, upsert, options));
-    // console.debug('Upsert todo result', result);
-    return list;
+    let _result = await this.query(async collection => await collection.updateOne(filter, upsert, options));  // check result
+    return { date: dateKey, todos: todos };
+  }
+
+  async deleteTodos() {
+    const dateKey = this.getTodayKey();
+    const filter = { date: dateKey };
+    const upsert = { $set: { todos: [] } };
+    const options = { upsert: true };
+    let _result = await this.query(async collection => await collection.updateOne(filter, upsert, options)); // check result
+    return { date: dateKey, todos: [] };
   }
 
   // List Operations

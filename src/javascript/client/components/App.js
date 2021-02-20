@@ -22,11 +22,14 @@ export default class App extends React.Component {
     this.addTodo = this.addTodo.bind(this);
     this.handleTodoChange = this.handleTodoChange.bind(this);
     this.updateList = this.updateList.bind(this);
+    this.clearToday = this.clearToday.bind(this);
   }
   componentDidMount() {
+    this.getList(this.getTodayKey());
+  }
+  getTodayKey() {
     let today = new Date(Date.now())
-    let todayISODate = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
-    this.getList(todayISODate);
+    return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
   }
   getList(date) {
     fetch(`/list?date=${date}`, {
@@ -77,13 +80,14 @@ export default class App extends React.Component {
   updateList(response) {
     response.json()
     .then(data => {
-      if (data.todos) {
-        this.setState({ todos: data.todos });
-      } else {
-        throw new Error('No todos');
-      }
+      this.setState({ todos: data.todos });
     })
     .catch(err => console.error('Error updating list', err));
+  }
+  clearToday() {
+    fetch('/todos', { method: 'DELETE' })
+    .then(res => this.updateList(res))
+    .catch(err => console.error('Error clearing list', err));
   }
   render() {
     const { todos, newTodo } = this.state;
@@ -99,6 +103,7 @@ export default class App extends React.Component {
           <input type='text' name='description' onChange={this.handleAddChange} value={newTodo.description}></input>
           <button onClick={this.addTodo}>Add</button>
         </div>
+        <button onClick={this.clearToday} className='clear'>Clear</button>
         <div className='header-column'>
           <div>Rank</div>
           <div>Description</div>
