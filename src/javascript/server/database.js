@@ -32,13 +32,8 @@ module.exports = class Database {
   async upsertTodo(newTodo) {
     const dateKey = this.getTodayKey();
     const list = await this.getTodoList(dateKey);
-    const { todos } = list;
-    const itemIndex = todos.findIndex(todo => todo.description === newTodo.description);
-    if (itemIndex >= 0) {
-      todos[itemIndex] = newTodo;
-    } else {
-      todos.push(newTodo);
-    }
+    const { todos } = list
+    this._upsertTodoMaintainingOrder(todos, newTodo);
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
@@ -46,13 +41,33 @@ module.exports = class Database {
     return { date: dateKey, todos: todos };
   }
 
-  async deleteTodos() {
+  // Upserts the todo while keeping the list ordered
+  _upsertTodoMaintainingOrder(todos, newTodo) {
+    const itemIndex = todos.findIndex(todo => todo.description === newTodo.description);
+    console.log('Index where todo was found', itemIndex);
+    const indexByRating = todos.findIndex(todo => todo.rating < newTodo.rating);
+    console.log('Index to insert at by rating', indexByRating);
+    if (indexByRating < 0) { // no elements in array
+      todos.push(newTodo);
+    } else if (itemIndex >= 0 && itemIndex === indexByRating) { // item exists in array at same target spot
+      todos[itemIndex] = newTodo;
+    } else if (itemIndex >= 0) { // item is in the array at a different spot
+      todos.splice(itemIndex, 1);
+      todos.splice(indexByRating, 0, newTodo);
+    } else { // item is not in the array
+      todos.splice(indexByRating, 0, newTodo);
+    }
+  }
+
+  async deleteTodo(description) {
     const dateKey = this.getTodayKey();
+    const list = await this.getTodoList(dateKey);
+    if (!list) { return "Error: no list found for today" }
+
+    const todos = list.todos.filter(todo => todo.description != description);
     const filter = { date: dateKey };
-    const upsert = { $set: { todos: [] } };
-    const options = { upsert: true };
-    let _result = await this.query(async collection => await collection.updateOne(filter, upsert, options)); // check result
-    return { date: dateKey, todos: [] };
+    const update = { $set: { date: dateKey, todos: todos } };
+    return await this.query(async collection => await collection.updateOne(filter, update));
   }
 
   // List Operations
@@ -67,10 +82,10 @@ module.exports = class Database {
     return await this.query(async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
-  async upsertList(dateKey) {
+  async upsertList(dateKey, todos) {
     assert(dateKey.match(dateKeyRegex));
     const filter = { date: dateKey };
-    const upsert = { $set: { todos: [] } };
+    const upsert = { $set: { todos } };
     const options = { upsert: true };
     return await this.query(async collection => await collection.updateOne(filter, upsert, options));
   }
@@ -80,20 +95,14 @@ module.exports = class Database {
     return await this.query(async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
   }
 
-  async deleteTodo(description) {
-    const dateKey = this.getTodayKey();
-    const list = await this.getTodoList(dateKey);
-    if (!list) { return "Error: no list found for today" }
-
-    const todos = list.todos.filter(todo => todo.description != description);
-    const filter = { date: dateKey };
-    const update = { $set: { date: dateKey, todos: todos } };
-    return await this.query(async collection => await collection.updateOne(filter, update));
-  }
-
   getTodayKey() {
     const date = new Date();
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  }
+
+  getYesterdayKey() {
+    const date = new Date();
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate() - 1}`;
   }
 
   validateTodo(todo) {

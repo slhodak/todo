@@ -4,7 +4,8 @@
   "description": "frontend for todo",
   "main": "index.js",
   "scripts": {
-    "build-eth": "solc --combined-json abi,bin,metadata,opcodes -o build/Todo src/solidity/Todo.sol",
+    "compile-todo": "solc --overwrite --bin --abi -o build/Todo src/solidity/Todo.sol",
+    "deploy-todo": "./scripts/deploy_todo.sh",
     "build-frontend": "webpack",
     "react-dev": "webpack --watch",
     "server-start": "node src/javascript/server/server.js",

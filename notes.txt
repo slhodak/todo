@@ -8,7 +8,13 @@ define ethereum contract purpose
 define ethereum contract api
 implement ethereum contract api
 
+fix completion/uncomplete update bug
+
 upgrade to typescript
+
+app needs a way to output the hash of a day's list, for comparison
+fromAddress should not be just stored in local memory... or maybe it should. Or stored only in browser and sent with each request.
+  then no such concept as "logged in". probably better?
 
 mongo data model / schema √
   key: date
@@ -59,4 +65,79 @@ new list flow
     always ask db for today's list
       if it's not there, make a blank one
 
+
+need: hash of the method signature and encoded parameters
+
+CURL to Save List Hash
+
+ABI
+{
+  "inputs":[
+    {"internalType":"bytes32","name":"listHash","type":"bytes32"},
+    {"internalType":"string","name":"day","type":"string"}
+  ],
+  "name":"saveListHash",
+  "outputs":[{"internalType":"bool","name":"","type":"bool"}],
+  "stateMutability":"nonpayable","type":"function"
+}
+
+(all values in hex)
+data param:
+  first 4 bytes of keccak256('saveListHash(bytes32,string)')
+    02047962
+  32-byte hash of sample_document.json (todo list):
+    9b5480dcc7da8372d4c49bfa6d9cffda51c43842b18b029e030088831af29b27
+  number of bytes in '2021-1-10':
+    0000000000000000000000000000000000000000000000000000000000000009
+  2021-1-10 as hex:
+    323032312d312d31300000000000000000000000000000000000000000000000
+all together:
+  0x02047962
+    0000000000000000000000000000000000000000000000000000000000000000
+    9b5480dcc7da8372d4c49bfa6d9cffda51c43842b18b029e030088831af29b27
+    0000000000000000000000000000000000000000000000000000000000000009
+    323032312d312d31300000000000000000000000000000000000000000000000
+
+0x02047962000000000000000000000000000000000000000000000000000000009b5480dcc7da8372d4c49bfa6d9cffda51c43842b18b029e030088831af29b270000000000000000000000000000000000000000000000000000000000000009323032312d312d31300000000000000000000000000000000000000000000000
+
+curl localhost:8545 --data '{"jsonrpc":"2.0","method":"eth_call","params":[{"from":"0x0088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6","to":"0xd7A75B00a461b3e2Fb090D61a9fdeEC14736b14d","data":"0x02047962000000000000000000000000000000000000000000000000000000009b5480dcc7da8372d4c49bfa6d9cffda51c43842b18b029e030088831af29b270000000000000000000000000000000000000000000000000000000000000009323032312d312d31300000000000000000000000000000000000000000000000"},"latest"],"id":1}'
+
+  Error: expected private key to be a (type)... etc
+
+
+Doing the above, but with geth instead of ganache:
+https://ethereum.stackexchange.com/questions/3514/how-to-call-a-contract-method-using-the-eth-call-json-rpc-api
+
+CURL to Read List Hash
+
+ABI
+{
+  "inputs":[
+    {"internalType":"address","name":"","type":"address"},
+    {"internalType":"string","name":"","type":"string"}
+  ],
+  "name":"listHashes",
+  "outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],
+  "stateMutability":"view","type":"function"
+}
+
+method signature:
+  listHashes(address,string)
+keccak256 of signature (first 4 bytes)
+  604e2184
+          7f45bb842fe6c96f25d89377b420a0783926abbad4852d34988b44f4
+20-byte account address
+  0088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6000000000000
+string of date key (2021-1-11), encoded in hex followed by buffer nibbles
+  323032312d312d31310000000000000000000000000000000000
+
+together:
+  604e218400000000000000000000000000000000000000000000
+  0088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6000000000000
+  323032312d312d31310000000000000000000000000000000000
+
+0x604e2184000000000000000000000000000000000000000000000088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6000000000000323032312d312d31310000000000000000000000000000000000
+
+
+curl localhost:8545 --data '{"jsonrpc":"2.0","method":"eth_call","params":[{"from":"0x0088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6","to":"0x7F8090faC302F69e739CEDD86824845344890959","data":"0x604e2184000000000000000000000000000000000000000000000088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6000000000000323032312d312d31310000000000000000000000000000000000"},"latest"],"id":1}'
 
