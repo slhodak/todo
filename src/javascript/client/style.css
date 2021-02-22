@@ -66,16 +66,17 @@ button {
 .todo-row div {
   width: 20%;
 }
-.resetList {
-  background-color: rgb(244, 14, 14);
+.erase-todo {
+  background-color: red;
   color: white;
 }
+
 
 /* Functions Area */
 .functions {
   display: flex;
   flex-direction: column;
-  border: 3px solid red;
+  border: 3px solid rgb(97, 36, 14);
   border-radius: 10px;
   padding: 10px;
 }
@@ -85,11 +86,15 @@ button {
 .address-input {
   border-radius: 5px;
 }
-.save-hash {
-  background-color: rgb(136, 198, 232);
-}
 .login {
   background-color: rgb(71, 173, 228);
+}
+.resetList {
+  background-color: rgb(244, 14, 14);
+  color: white;
+}
+.save-hash {
+  background-color: rgb(136, 198, 232);
 }
 
 /* Info Area */

@@ -146,7 +146,7 @@ export default class App extends React.Component {
     return (
       <div>
         <div className='header-area'>
-          <h1>todo</h1>
+          <h1>todo {this.getTodayKey()}</h1>
         </div>
         <div className='app-area'>
           <div className='left-panel'>
