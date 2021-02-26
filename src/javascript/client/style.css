@@ -66,9 +66,14 @@ button {
 .todo-row div {
   width: 20%;
 }
+.todo-item {
+  border-top: 1px solid rgb(179, 179, 179);
+  padding: 3px 0px;
+}
 .erase-todo {
   background-color: red;
   color: white;
+  align-self: center;
 }
 
 

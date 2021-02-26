@@ -4,7 +4,7 @@ import '../style.css';
 export default (props) => {
   const { item, handleTodoChange, deleteTodo } = props;
   return (
-    <div className='todo-row'>
+    <div className='todo-row todo-item'>
       <div className='description'>{item.description}</div>
       <div>{item.need.toString()}</div>
       <div>{item.want.toString()}</div>

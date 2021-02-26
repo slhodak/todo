@@ -137,6 +137,9 @@ export default class App extends React.Component {
   updateListInState(response) {
     response.json()
     .then(data => {
+      if (data.todos === null) {
+        return this.resetList();
+      }
       this.setState({ todos: data.todos });
     })
     .catch(err => console.error('Error updating list', err));
@@ -170,7 +173,7 @@ export default class App extends React.Component {
             </div>
             <div className='todo-list'>
               <div className='todo-row'>
-                <div>Description</div>
+                <div className='description'>Description</div>
                 <div>Need</div>
                 <div>Want</div>
                 <div>Complete</div>

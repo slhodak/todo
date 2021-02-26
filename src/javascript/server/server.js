@@ -61,11 +61,7 @@ app.get('/list', async (req, res) => {
   try {
     const { date } = req.query;
     const list = await db.getTodoList(date);
-    if (list) {
-      res.send(list);
-    } else {
-      res.send([]);
-    }
+    res.send({ list });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);

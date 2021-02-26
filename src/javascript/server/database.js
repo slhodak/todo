@@ -32,7 +32,7 @@ module.exports = class Database {
   async upsertTodo(newTodo) {
     const dateKey = this.getTodayKey();
     const list = await this.getTodoList(dateKey);
-    const { todos } = list
+    const { todos } = list;
     this._upsertTodoMaintainingOrder(todos, newTodo);
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
