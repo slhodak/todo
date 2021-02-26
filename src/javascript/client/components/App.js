@@ -137,10 +137,10 @@ export default class App extends React.Component {
   updateListInState(response) {
     response.json()
     .then(data => {
-      if (data.todos === null) {
+      if (data.list === null) {
         return this.resetList();
       }
-      this.setState({ todos: data.todos });
+      this.setState({ todos: data.list.todos });
     })
     .catch(err => console.error('Error updating list', err));
   }

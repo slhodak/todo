@@ -71,7 +71,6 @@ app.get('/list', async (req, res) => {
 app.post('/list', async (req, res) => {
   try {
     const todos = req.body;
-    console.log(todos);
     const result = await db.upsertList(db.getTodayKey(), todos);
     res.send(result);
   } catch (err) {
