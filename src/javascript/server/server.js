@@ -21,7 +21,7 @@ app.post('/todo', async (req, res) => {
     const todo = req.body; // opaque
     console.debug('Upserting todo', todo);
     const list = await db.upsertTodo(todo);
-    res.send(list);
+    res.send({ list });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
@@ -33,7 +33,7 @@ app.delete('/todo', async (req, res) => {
     const { description } = req.query;
     const _result = await db.deleteTodo(description);
     const list = await db.getTodoList(db.getTodayKey());
-    res.send(list);
+    res.send({ list });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
@@ -43,7 +43,7 @@ app.delete('/todo', async (req, res) => {
 app.delete('/todos', async (_req, res) => {
   try {
     const list = await db.deleteTodos(); // check for error
-    res.send(list);
+    res.send({ list });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);
@@ -71,8 +71,9 @@ app.get('/list', async (req, res) => {
 app.post('/list', async (req, res) => {
   try {
     const todos = req.body;
-    const result = await db.upsertList(db.getTodayKey(), todos);
-    res.send(result);
+    const _result = await db.upsertList(db.getTodayKey(), todos);
+    const list = await db.getTodoList(db.getTodayKey());
+    res.send({ list });
   } catch (err) {
     console.error(error);
     res.status(500).send(error.message);
@@ -84,7 +85,7 @@ app.delete('/list', async (req, res) => {
     const { date } = req.query;
     const _result = await db.deleteList(date); // check for error
     const list = await db.getTodoList(db.getTodayKey());
-    res.send(list);
+    res.send({ list });
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);

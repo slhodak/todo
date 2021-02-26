@@ -30,6 +30,7 @@ module.exports = class Database {
   // Todo Item Operations
 
   async upsertTodo(newTodo) {
+    console.log('Upserting todo', newTodo);
     const dateKey = this.getTodayKey();
     const list = await this.getTodoList(dateKey);
     const { todos } = list;
@@ -43,20 +44,38 @@ module.exports = class Database {
 
   // Upserts the todo while keeping the list ordered
   _upsertTodoMaintainingOrder(todos, newTodo) {
-    const itemIndex = todos.findIndex(todo => todo.description === newTodo.description);
-    console.log('Index where todo was found', itemIndex);
-    const indexByRating = todos.findIndex(todo => todo.rating < newTodo.rating);
-    console.log('Index to insert at by rating', indexByRating);
-    if (indexByRating < 0) { // no elements in array
+    if (todos.length === 0) { // no elements in array
       todos.push(newTodo);
-    } else if (itemIndex >= 0 && itemIndex === indexByRating) { // item exists in array at same target spot
-      todos[itemIndex] = newTodo;
-    } else if (itemIndex >= 0) { // item is in the array at a different spot
-      todos.splice(itemIndex, 1);
-      todos.splice(indexByRating, 0, newTodo);
-    } else { // item is not in the array
-      todos.splice(indexByRating, 0, newTodo);
+      return;
     }
+    const itemIndex = todos.findIndex(todo => todo.description === newTodo.description);
+    console.log(`Index where "${newTodo.description}" was found`, itemIndex);
+    const validRange = this._findValidUpsertRange(todos, newTodo);
+    console.log(`Indexes to insert "${newTodo.description}" within, by rating`, validRange);
+    if (itemIndex >= 0 && itemIndex >= validRange[0] && itemIndex <= validRange[1]) { // item exists in array within valid range
+      todos[itemIndex] = newTodo;
+    } else if (itemIndex >= 0) { // item is in the array outside valid range
+      todos.splice(itemIndex, 1);
+      todos.splice(validRange[1], 0, newTodo);
+    } else { // item is not in the array
+      todos.splice(validRange[1], 0, newTodo);
+    }
+  }
+
+  _findValidUpsertRange(todos, newTodo) {
+    let validRange = [null, todos.length - 1];
+    for (let i = 0; i < todos.length; i++) {
+      if (validRange[0] === null && todos[i].rating <= newTodo.rating) {
+        validRange[0] = i;
+      }
+      if (validRange[1] === todos.length - 1 && todos[i].rating < newTodo.rating) {
+        validRange[1] = i - 1;
+      }
+      if (validRange[0] != null && validRange[1] != todos.length - 1) {
+        break;
+      }
+    }
+    return validRange;
   }
 
   async deleteTodo(description) {
