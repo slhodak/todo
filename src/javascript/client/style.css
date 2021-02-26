@@ -81,6 +81,7 @@ button {
 .functions {
   display: flex;
   flex-direction: column;
+  background-color: lightgray;
   border: 3px solid rgb(97, 36, 14);
   border-radius: 10px;
   padding: 10px;
@@ -106,6 +107,7 @@ button {
 .info {
   display: flex;
   flex-direction: column;
+  background-color: lightgray;
   border: 3px solid rgb(0, 0, 0);
   border-radius: 10px;
   padding: 10px;
@@ -117,4 +119,13 @@ button {
   color: #00ff41;
   font-family: monospace;
   padding: 2px;
+}
+
+/* Mediate Area */
+.meditate {
+  margin-top: 10px;
+  padding: 10px;
+  border: 3px solid rgb(94, 2, 150);
+  border-radius: 10px;
+  background: linear-gradient(25deg, white, rgb(0, 251, 255), rgb(101, 6, 255), rgb(0, 0, 0));
 }
