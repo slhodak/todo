@@ -1,0 +1,20 @@
+{
+  "startDate": "2021-1-11",
+  "endDate": "2021-1-18",
+  "need": {
+    "completed": 5,
+    "total": 7
+  },
+  "needWant": {
+    "completed": 8,
+    "total": 15
+  },
+  "want": {
+    "completed": 11,
+    "total": 20
+  },
+  "neither": {
+    "completed": 0,
+    "total": 1
+  }
+}

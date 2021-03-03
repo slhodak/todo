@@ -123,7 +123,7 @@ module.exports = class Database {
     const date = new Date();
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
   }
-
+  // needs to account for crossing over the month...
   getYesterdayKey() {
     const date = new Date();
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate() - 1}`;

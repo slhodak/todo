@@ -1,0 +1,26 @@
+{
+    "date": "2021-1-11",
+    "todos": [
+        {
+            "description": "Apply for passport",
+            "rating": 1,
+            "need": true,
+            "want": false,
+            "complete": false
+        },
+        {
+            "description": "Play a game",
+            "rating": -1,
+            "need": false,
+            "want": true,
+            "complete": false
+        },
+        {
+            "description": "Go jogging",
+            "rating": 0,
+            "need": true,
+            "want": true,
+            "complete": false
+        }
+    ]
+}

@@ -54,7 +54,7 @@ app.delete('/todos', async (_req, res) => {
 
 app.get('/all', async (_req, res) => {
   const allLists = await db.getAll();  
-  res.send(allLists);
+  res.send({ lists: allLists });
 });
 
 app.get('/list', async (req, res) => {
@@ -92,6 +92,12 @@ app.delete('/list', async (req, res) => {
   }
 });
 
+// Stats Fetching
+app.get('/stats', (req, res) => {
+  
+  // list.todos.map(todo => <div></div>)}
+});
+
 // Blockchain Operations
 
 app.post('/blockchain/login', (req, res) => {
@@ -109,14 +115,15 @@ app.post('/blockchain/login', (req, res) => {
   }
 });
 
-app.post('/blockchain/saveListHash', async (req, res) => {
+app.post('/blockchain/saveListHash', async (_req, res) => {
   try {
     if (fromAddress.length === 0) {
       res.status(400).send('No address to save from; please log in.');
       return;
     }
-    const todayKey = db.getTodayKey();
+    const todayKey = db.getTodayKey(); // "2021-2-1"
     const list = await db.getTodoList(todayKey);
+    console.log('saving ', JSON.stringify(list));
     todoContract.saveListHash(fromAddress, list, todayKey);
     res.sendStatus(200);
   } catch (err) {

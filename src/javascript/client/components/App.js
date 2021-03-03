@@ -1,5 +1,6 @@
 import React from 'react';
 import Todo from './Todo';
+import Stats from './Stats';
 import '../style.css';
 
 export default class App extends React.Component {
@@ -66,7 +67,7 @@ export default class App extends React.Component {
       todo.rating -= 1;
     }
     if (!todo.want && !todo.need) {
-      todo.rating -= 2;
+      todo.rating = -2;
     }
   }
   addTodo() {
@@ -202,6 +203,9 @@ export default class App extends React.Component {
               <input type='checkbox' name='meditate-2'></input>
             </div>
           </div>
+        </div>
+        <div className='bottom-area'>
+          <Stats />
         </div>
       </div>
     )

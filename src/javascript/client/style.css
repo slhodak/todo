@@ -129,3 +129,8 @@ button {
   border-radius: 10px;
   background: linear-gradient(25deg, white, rgb(0, 251, 255), rgb(101, 6, 255), rgb(0, 0, 0));
 }
+
+/* Statistics */
+.stats {
+  border: 1px solid black;
+}
