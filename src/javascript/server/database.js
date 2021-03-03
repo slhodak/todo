@@ -2,11 +2,12 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const url = 'mongodb://127.0.0.1:27017';
 const dateKeyRegex = /\d{4}-\d+-\d+/; // YYYY-[M]M-[D]D
+const millisInADay = 1000 * 60 * 60 * 24;
 
 module.exports = class Database {
   constructor() {
     this.dbName = 'todo';
-    this.todoCollection = 'todo';
+    this.listsCollection = 'lists';
     this.statsCollection = 'stats';
   }
 
@@ -39,7 +40,7 @@ module.exports = class Database {
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
-    let _result = await this.query(this.todoCollection, async collection => await collection.updateOne(filter, upsert, options));  // check result
+    let _result = await this.query(this.listsCollection, async collection => await collection.updateOne(filter, upsert, options));  // check result
     return { date: dateKey, todos: todos };
   }
 
@@ -92,19 +93,19 @@ module.exports = class Database {
     const todos = list.todos.filter(todo => todo.description != description);
     const filter = { date: dateKey };
     const update = { $set: { date: dateKey, todos: todos } };
-    return await this.query(this.todoCollection, async collection => await collection.updateOne(filter, update));
+    return await this.query(this.listsCollection, async collection => await collection.updateOne(filter, update));
   }
 
   // List Operations
 
   async getAll() {
-    return await this.query(this.todoCollection, async collection => await collection.find({}).toArray());
+    return await this.query(this.listsCollection, async collection => await collection.find({}).toArray());
   }
 
   async getTodoList(dateKey) {
     assert(dateKey.match(dateKeyRegex));
     console.log(`Getting list for ${dateKey}`);
-    return await this.query(this.todoCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
+    return await this.query(this.listsCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
   async upsertList(dateKey, todos) {
@@ -112,26 +113,92 @@ module.exports = class Database {
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
-    return await this.query(this.todoCollection, async collection => await collection.updateOne(filter, upsert, options));
+    return await this.query(this.listsCollection, async collection => await collection.updateOne(filter, upsert, options));
   }
 
   async deleteList(dateKey) {
     assert(dateKey.match(dateKeyRegex));
-    return await this.query(this.todoCollection, async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
+    return await this.query(this.listsCollection, async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
   }
 
   // Statistics Operations
 
+  // Run once a week
+  async generatePreviousWeekStats() {
+    // sum completed and total tasks of all days in week
+    const now = Date.now();
+    // from 8 days ago to 1 day ago; last week ended yesterday (Sunday), today is Monday
+    let weeksDays = [];
+    for (let i = 7; i > 0; i--) {
+      weeksDays.push(this.getDayKey(now - (millisInADay * i)));
+    }
+    console.log(weeksDays);
+    // get lists for every day in the week
+    let lists = [];
+    for (let i = 0; i < weeksDays.length; i++ ) {
+      lists.push(await this.getTodoList(weeksDays[i]));
+    }
+    let summary = {
+      type: "week",
+      startDate: weeksDays[0],
+      endDate: weeksDays[6],
+      need: {
+        completed: 0,
+        total: 0
+      },
+      needWant: {
+        completed: 0,
+        total: 0
+      },
+      want: {
+        completed: 0,
+        total: 0
+      },
+      neither: {
+        completed: 0,
+        total: 0
+      }
+    };
+    // ratings go from -2 to 1, but here go from 0 to 3
+    let zeroIndexedRatings = ['neither', 'want', 'needWant', 'need'];
+    // count all tasks completed and totals
+    for (let i = 0; i < lists.length; i++) {
+      if (!lists[i]) {
+        continue;
+      }
+      let { todos } = lists[i];
+      for (let i = 0; i < todos.length; i++) {
+        let type = zeroIndexedRatings[todos[i].rating + 2];
+        summary[type].total += 1;
+        if (todos[i].complete === true) {
+          summary[type].completed += 1; 
+        }
+      }
+    }
+    return summary; // write to db
+  }
+
+  // Run once a month
+  async generatePreviousMonthStats() {
+    // sum completed and total tasks of all days in month
+  }
+
+  // Run once a year
+  async generatePreviousYearStats() {
+    // sum stats of all months of year
+  }
+
   // Utils
 
-  getTodayKey() {
-    const date = new Date();
+  getDayKey(timestamp) {
+    const date = new Date(timestamp);
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
   }
-  // needs to account for crossing over the month...
+  getTodayKey() {
+    return this.getDayKey(Date.now());
+  }
   getYesterdayKey() {
-    const date = new Date();
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate() - 1}`;
+    return this.getDayKey(Date.now() - millisInADay);
   }
 
   validateTodo(todo) {
