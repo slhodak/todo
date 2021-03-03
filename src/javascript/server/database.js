@@ -7,7 +7,7 @@ module.exports = class Database {
   constructor() {
     this.dbName = 'todo';
     this.todoCollection = 'todo';
-    this.aggregatesCollection = 'aggregates';
+    this.statsCollection = 'stats';
   }
 
   // Complex hybrid async/callback design just so queriers don't need to close client?
@@ -119,6 +119,10 @@ module.exports = class Database {
     assert(dateKey.match(dateKeyRegex));
     return await this.query(this.todoCollection, async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
   }
+
+  // Statistics Operations
+
+  // Utils
 
   getTodayKey() {
     const date = new Date();
