@@ -87,6 +87,7 @@ module.exports = class Database {
     const dateKey = this.getTodayKey();
     const list = await this.getTodoList(dateKey);
     if (!list) { return "Error: no list found for today" }
+    const _result = await this.backupList(dateKey);
 
     const todos = list.todos.filter(todo => todo.description != description);
     const filter = { date: dateKey };
@@ -101,13 +102,16 @@ module.exports = class Database {
   }
 
   async getTodoList(dateKey) {
-    assert(dateKey.match(dateKeyRegex));
+    assert(dateKeyRegex.test(dateKey));
     console.log(`Getting list for ${dateKey}`);
     return await this.query(this.listsCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
   async upsertList(dateKey, todos) {
-    assert(dateKey.match(dateKeyRegex));
+    assert(dateKeyRegex.test(dateKey));
+    if (todos.empty) {
+      const _result = await this.backupList(dateKey);
+    }
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
@@ -115,8 +119,30 @@ module.exports = class Database {
   }
 
   async deleteList(dateKey) {
-    assert(dateKey.match(dateKeyRegex));
+    assert(dateKeyRegex.test(dateKey));
+    const _result = await this.backupList(dateKey);
     return await this.query(this.listsCollection, async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
+  }
+
+  // Call before any delete operation
+  async backupList(dateKey) {
+    assert(dateKeyRegex.test(dateKey));
+    const { todos } = await this.getTodoList(dateKey);
+    const filter = { date: `${dateKey}-backup` };
+    const upsert = { $set: { todos } };
+    const options = { upsert: true };
+    return await this.query(this.listsCollection, async collection => await collection.updateOne(filter, upsert, options));
+  }
+
+  async restoreList(dateKey) {
+    assert(dateKeyRegex.test(dateKey));
+    const list = await this.getTodoList(`${dateKey}-backup`);
+    if (!list) {
+      throw new Error(`No backup found for date ${dateKey}`);
+    }
+    const { todos } = list;
+    const _result = await this.upsertList(dateKey, todos);
+    return list;
   }
 
   // Statistics Operations

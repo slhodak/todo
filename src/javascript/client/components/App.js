@@ -25,6 +25,7 @@ export default class App extends React.Component {
     this.handleTodoChange = this.handleTodoChange.bind(this);
     this.deleteTodo = this.deleteTodo.bind(this);
     this.resetList = this.resetList.bind(this);
+    this.restoreList = this.restoreList.bind(this);
     this.handleAddressChange = this.handleAddressChange.bind(this);
     this.loginToBlockchain = this.loginToBlockchain.bind(this);
     this.saveHashToBlockchain = this.saveHashToBlockchain.bind(this);
@@ -114,6 +115,12 @@ export default class App extends React.Component {
     .then(res => this.updateListInState(res))
     .catch(err => console.error('Error resetting list', err));
   }
+  restoreList() {
+    console.log('Restoring list from backup, if any');
+    fetch(`/list/restore?date=${this.getTodayKey()}`)
+    .then(res => this.updateListInState(res))
+    .catch(err => console.error('Error restoring list', err));
+  }
   handleAddressChange(event) {
     this.setState({ addressInput: event.target.value });
   }
@@ -181,6 +188,7 @@ export default class App extends React.Component {
               </div>
               {/* newly added items go here and get the Have/Want columns, which rearrange them */}
               {todos ? todos.map(item => <Todo item={item} handleTodoChange={this.handleTodoChange} deleteTodo={this.deleteTodo}/>) : null}
+              <button onClick={this.restoreList} className='restore-list'>Restore List</button>
             </div>
           </div>
           <div className='right-panel'>

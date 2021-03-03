@@ -1,0 +1,99 @@
+{
+    "list": {
+        "_id": "603fd3146f3073c9e6982304",
+        "date": "2021-2-3",
+        "todos": [
+            {
+                "description": "tact",
+                "need": true,
+                "want": false,
+                "rating": 1,
+                "complete": false
+            },
+            {
+                "description": "pay dermatology invoice",
+                "need": true,
+                "want": false,
+                "rating": 1,
+                "complete": true
+            },
+            {
+                "description": "send linkedin messages",
+                "need": true,
+                "want": false,
+                "rating": 1,
+                "complete": true
+            },
+            {
+                "description": "parking ticket call",
+                "need": true,
+                "want": false,
+                "rating": 1,
+                "complete": false
+            },
+            {
+                "description": "schwab correction update intuit",
+                "need": true,
+                "want": false,
+                "rating": 1,
+                "complete": true
+            },
+            {
+                "description": "ask anchorage about interview",
+                "need": true,
+                "want": true,
+                "rating": 0,
+                "complete": true
+            },
+            {
+                "description": "todo: statistics improvement",
+                "need": true,
+                "want": true,
+                "rating": 0,
+                "complete": false
+            },
+            {
+                "description": "taylini song",
+                "need": true,
+                "want": true,
+                "rating": 0,
+                "complete": false
+            },
+            {
+                "description": "todo: prevent unwanted list reset",
+                "need": true,
+                "want": true,
+                "rating": 0,
+                "complete": false
+            },
+            {
+                "description": "todo: style list",
+                "need": false,
+                "want": true,
+                "rating": -1,
+                "complete": false
+            },
+            {
+                "description": "todo: blockchain read function",
+                "need": false,
+                "want": true,
+                "rating": -1,
+                "complete": false
+            },
+            {
+                "description": "todo: add exercise section",
+                "need": false,
+                "want": true,
+                "rating": -1,
+                "complete": false
+            },
+            {
+                "description": "study pgp",
+                "need": false,
+                "want": true,
+                "rating": -1,
+                "complete": false
+            }
+        ]
+    }
+}

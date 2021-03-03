@@ -19,7 +19,6 @@ app.use('/', bodyParser.json());
 app.post('/todo', async (req, res) => {
   try {
     const todo = req.body; // opaque
-    console.debug('Upserting todo', todo);
     const list = await db.upsertTodo(todo);
     res.send({ list });
   } catch (error) {
@@ -39,16 +38,6 @@ app.delete('/todo', async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-
-app.delete('/todos', async (_req, res) => {
-  try {
-    const list = await db.deleteTodos(); // check for error
-    res.send({ list });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error.message);
-  }
-})
 
 // List Operations
 
@@ -85,6 +74,17 @@ app.delete('/list', async (req, res) => {
     const { date } = req.query;
     const _result = await db.deleteList(date); // check for error
     const list = await db.getTodoList(db.getTodayKey());
+    res.send({ list });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+});
+
+app.get('/list/restore', async (req, res) => {
+  try {
+    const { date } = req.query;
+    const list = await db.restoreList(date);
     res.send({ list });
   } catch (error) {
     console.error(error);
