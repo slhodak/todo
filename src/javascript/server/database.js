@@ -6,18 +6,19 @@ const dateKeyRegex = /\d{4}-\d+-\d+/; // YYYY-[M]M-[D]D
 module.exports = class Database {
   constructor() {
     this.dbName = 'todo';
-    this.collectionName = 'todo';
+    this.todoCollection = 'todo';
+    this.aggregatesCollection = 'aggregates';
   }
 
   // Complex hybrid async/callback design just so queriers don't need to close client?
-  async query(method) {
+  async query(collectionName, method) {
     let client;
     try {
       client = await MongoClient.connect(url, { useUnifiedTopology: true });
       assert.notStrictEqual(null, client);
       const db = client.db(this.dbName);
       console.log(`Connected to db '${db.databaseName}' for method '${method}'`);
-      const collection = db.collection(this.collectionName);
+      const collection = db.collection(collectionName);
       const result = await method(collection);
       await client.close();
       return result;
@@ -38,7 +39,7 @@ module.exports = class Database {
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
-    let _result = await this.query(async collection => await collection.updateOne(filter, upsert, options));  // check result
+    let _result = await this.query(this.todoCollection, async collection => await collection.updateOne(filter, upsert, options));  // check result
     return { date: dateKey, todos: todos };
   }
 
@@ -91,19 +92,19 @@ module.exports = class Database {
     const todos = list.todos.filter(todo => todo.description != description);
     const filter = { date: dateKey };
     const update = { $set: { date: dateKey, todos: todos } };
-    return await this.query(async collection => await collection.updateOne(filter, update));
+    return await this.query(this.todoCollection, async collection => await collection.updateOne(filter, update));
   }
 
   // List Operations
 
   async getAll() {
-    return await this.query(async collection => await collection.find({}).toArray());
+    return await this.query(this.todoCollection, async collection => await collection.find({}).toArray());
   }
 
   async getTodoList(dateKey) {
     assert(dateKey.match(dateKeyRegex));
     console.log(`Getting list for ${dateKey}`);
-    return await this.query(async collection => await collection.findOne({ date: { $eq: dateKey } }));
+    return await this.query(this.todoCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
   async upsertList(dateKey, todos) {
@@ -111,12 +112,12 @@ module.exports = class Database {
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
-    return await this.query(async collection => await collection.updateOne(filter, upsert, options));
+    return await this.query(this.todoCollection, async collection => await collection.updateOne(filter, upsert, options));
   }
 
   async deleteList(dateKey) {
     assert(dateKey.match(dateKeyRegex));
-    return await this.query(async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
+    return await this.query(this.todoCollection, async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
   }
 
   getTodayKey() {
