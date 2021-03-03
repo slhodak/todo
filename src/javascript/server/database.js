@@ -66,10 +66,8 @@ module.exports = class Database {
 
   _findValidUpsertRange(todos, newTodo) {
     let validRange = [null, todos.length];
-    // range begins
-    //   before the first item with a lower or equal rating, or the first index
-    // range ends
-    //   before the first item with lower rating, or the last index
+    // range begins before the first item with a lower or equal rating, or the first index
+    // range ends before the first item with lower rating, or the last index
     for (let i = 0; i < todos.length; i++) {
       if (validRange[0] === null && todos[i].rating <= newTodo.rating) {
         validRange[0] = i - 1 > 0 ? i - 1 : 0;
