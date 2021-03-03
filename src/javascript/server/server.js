@@ -23,7 +23,7 @@ app.post('/todo', async (req, res) => {
     res.send({ list });
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -35,7 +35,7 @@ app.delete('/todo', async (req, res) => {
     res.send({ list });
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -53,7 +53,7 @@ app.get('/list', async (req, res) => {
     res.send({ list });
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -65,7 +65,7 @@ app.post('/list', async (req, res) => {
     res.send({ list });
   } catch (err) {
     console.error(error);
-    res.status(500).send(error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -77,7 +77,7 @@ app.delete('/list', async (req, res) => {
     res.send({ list });
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -88,7 +88,7 @@ app.get('/list/restore', async (req, res) => {
     res.send({ list });
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 

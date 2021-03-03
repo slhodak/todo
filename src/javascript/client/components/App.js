@@ -145,6 +145,9 @@ export default class App extends React.Component {
   updateListInState(response) {
     response.json()
     .then(data => {
+      if (data.error) {
+        throw new Error(data.error);
+      }
       if (data.list === null) {
         return this.resetList();
       }
