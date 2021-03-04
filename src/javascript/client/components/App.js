@@ -205,12 +205,19 @@ export default class App extends React.Component {
               <div>Logged in as:</div>
               <div className='logged-in-address'>{loggedInAddress || '0x0'}</div>
             </div>
-            <div className='meditate'>
-              <div>Meditate</div>
-              <label htmlFor='meditate-1'>1</label>
-              <input type='checkbox' name='meditate-1'></input>
-              <label htmlFor='meditate-2'>2</label>
-              <input type='checkbox' name='meditate-2'></input>
+            <div className='oppose-entropy'>
+              <div className='meditate'>
+                <div>Meditate</div>
+                <label htmlFor='meditate-1'>1</label>
+                <input type='checkbox' name='meditate-1'></input>
+                <label htmlFor='meditate-2'>2</label>
+                <input type='checkbox' name='meditate-2'></input>
+              </div>
+              <div className='exercise'>
+                <div>Exercise</div>
+                <label htmlFor='exercise'>1</label>
+                <input type='checkbox' name='exercise'></input>
+              </div>
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ button {
 }
 .add-todo {
   padding: 0px 20px;
-  height: 1.4em;
+  height: 1.8em;
   background-color: rgb(91, 230, 130);
 }
 .need-want {
@@ -150,12 +150,26 @@ button {
 }
 
 /* Meditate & Exercise Area */
+.oppose-entropy {
+  display: flex;
+  /* justify-content: space-between; */
+}
 .meditate {
-  margin-top: 10px;
+  flex-grow: 1;
+  margin: 10px 4px 0px 0px;
   padding: 10px;
   border: 3px solid rgb(94, 2, 150);
   border-radius: 10px;
   background: linear-gradient(25deg, white, rgb(0, 251, 255), rgb(101, 6, 255), rgb(0, 0, 0));
+}
+.exercise {
+  flex-grow: 1;
+  margin: 10px 0px 0px 4px;
+  padding: 10px;
+  border: 3px solid rgb(68, 80, 68);
+  border-radius: 10px;
+  color: rgb(228, 228, 228);
+  background-color: rgb(67, 60, 60);
 }
 
 /* Statistics */
