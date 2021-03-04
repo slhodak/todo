@@ -166,9 +166,7 @@ export default class App extends React.Component {
           <div className='left-panel'>
             <div className='new-todo-container'>
               <div className='input-details'>
-                <div>
-                  <input className='description' type='text' name='description' onChange={this.handleAddChange} value={newTodo.description}></input>
-                </div>
+                <input className='description' type='text' name='description' onChange={this.handleAddChange} value={newTodo.description}></input>
                 <div className='need-want'>
                   <div>
                     <label htmlFor='need'>Need to</label>
@@ -185,13 +183,13 @@ export default class App extends React.Component {
             <div className='todo-list'>
               <div className='todo-row'>
                 <div className='description'>Description</div>
-                <div>Need</div>
-                <div>Want</div>
-                <div>Complete</div>
+                <div className='boolean-factor'>Need</div>
+                <div className='boolean-factor'>Want</div>
+                <div className='complete'>Complete</div>
+                <div className='erase-todo-spacer'></div>
               </div>
               {/* newly added items go here and get the Have/Want columns, which rearrange them */}
               {todos ? todos.map(item => <Todo item={item} handleTodoChange={this.handleTodoChange} deleteTodo={this.deleteTodo}/>) : null}
-              <button onClick={this.restoreList} className='restore-list'>Restore List</button>
             </div>
           </div>
           <div className='right-panel'>
@@ -201,6 +199,7 @@ export default class App extends React.Component {
               <button onClick={this.loginToBlockchain} className='login'>Log in to Blockchain</button>
               <button onClick={this.resetList} className='resetList'>Reset List</button>
               <button onClick={this.saveHashToBlockchain} className='save-hash'>Save Hash</button>
+              <button onClick={this.restoreList} className='restore-list'>Restore List (Undo Erase or Reset)</button>
             </div>
             <div className='info'>
               <div>Logged in as:</div>

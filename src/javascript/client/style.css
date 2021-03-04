@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500&display=swap');
+
 html, input, button {
+  font-family: 'Noto Sans JP', sans-serif;
   font-size: 1em;
 }
 
@@ -63,17 +66,42 @@ button {
 .todo-row {
   display: flex;
 }
-.todo-row div {
-  width: 20%;
-}
 .todo-item {
   border-top: 1px solid rgb(179, 179, 179);
   padding: 3px 0px;
+}
+/* There are 3 of these per row */
+.todo-row > .boolean-factor {
+  min-width: 70px;
+  text-align: center;
+}
+/* There is 1 of these per row */
+.todo-row > .complete {
+  min-width: 90px;
+  display: flex;
+  justify-content: center;
+}
+/* There is 1 of these in the header row */
+.erase-todo-spacer {
+  min-width: 70px;
+}
+/* There is 1 of these in the item row */
+.todo-row > .erase-todo-container {
+  min-width: 70px;
+  display: flex;
+  justify-content: center;
+}
+/* There is 1 of these per row */
+.todo-row > .description {
+  flex-grow: 1;
 }
 .erase-todo {
   background-color: red;
   color: white;
   align-self: center;
+}
+.restore-list {
+  background-color: rgb(91, 230, 130);
 }
 
 
@@ -121,7 +149,7 @@ button {
   padding: 2px;
 }
 
-/* Mediate Area */
+/* Meditate & Exercise Area */
 .meditate {
   margin-top: 10px;
   padding: 10px;

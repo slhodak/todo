@@ -6,12 +6,14 @@ export default (props) => {
   return (
     <div className='todo-row todo-item'>
       <div className='description'>{item.description}</div>
-      <div>{item.need.toString()}</div>
-      <div>{item.want.toString()}</div>
-      <div>
-        <input type='checkbox' name='complete' checked={item.complete} onChange={(e) => handleTodoChange(item.description, ['complete', e.target.checked])}></input>
+      <div className='boolean-factor'>{item.need.toString()}</div>
+      <div className='boolean-factor'>{item.want.toString()}</div>
+      <div className='complete'>
+        <input className='complete-box' type='checkbox' name='complete' checked={item.complete} onChange={(e) => handleTodoChange(item.description, ['complete', e.target.checked])}></input>
       </div>
-      <button className='erase-todo' onClick={() => deleteTodo(item.description)}>erase</button>
+      <div className='erase-todo-container'>
+        <button className='erase-todo' onClick={() => deleteTodo(item.description)}>erase</button>
+      </div>
     </div>
   )
 }
