@@ -1,9 +1,10 @@
-const path = require('path');
+const assert = require('assert');
 const cron = require('node-cron');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const db = new (require('./database'))();
+const Database = require('./database');
+const db = new Database();
 const todoContract = new (require('./blockchain'))();
 let fromAddress = '';
 
@@ -31,7 +32,7 @@ app.delete('/todo', async (req, res) => {
   try {
     const { description } = req.query;
     const _result = await db.deleteTodo(description);
-    const list = await db.getTodoList(db.getTodayKey());
+    const list = await db.getTodoList(Database.getTodayKey());
     res.send({ list });
   } catch (error) {
     console.error(error);
@@ -60,8 +61,8 @@ app.get('/list', async (req, res) => {
 app.post('/list', async (req, res) => {
   try {
     const todos = req.body;
-    const _result = await db.upsertList(db.getTodayKey(), todos);
-    const list = await db.getTodoList(db.getTodayKey());
+    const _result = await db.upsertList(Database.getTodayKey(), todos);
+    const list = await db.getTodoList(Database.getTodayKey());
     res.send({ list });
   } catch (err) {
     console.error(error);
@@ -73,7 +74,7 @@ app.delete('/list', async (req, res) => {
   try {
     const { date } = req.query;
     const _result = await db.deleteList(date); // check for error
-    const list = await db.getTodoList(db.getTodayKey());
+    const list = await db.getTodoList(Database.getTodayKey());
     res.send({ list });
   } catch (error) {
     console.error(error);
@@ -123,9 +124,10 @@ app.post('/blockchain/login', (req, res) => {
 app.get('/blockchain/listHash', async(req, res) => {
   try {
     const { date } = req.query;
+    assert(Database.dateKeyRegex.test(date));
     let data = await todoContract.listHashes(fromAddress, date);
     res.send({ hash: data });
-  } catch (error) {
+  } catch (err) {
     console.error(err);
     res.status(500).send({ error: err.message });
   }
@@ -137,7 +139,7 @@ app.post('/blockchain/saveListHash', async (_req, res) => {
       res.status(400).send('No address to save from; please log in.');
       return;
     }
-    const todayKey = db.getTodayKey(); // "2021-2-1"
+    const todayKey = Database.getTodayKey(); // "2021-2-1"
     const list = await db.getTodoList(todayKey);
     console.log('saving ', JSON.stringify(list));
     todoContract.saveListHash(fromAddress, list, todayKey);
@@ -156,10 +158,10 @@ app.listen(3000, () => {
 
 // every day at 4am, create an empty list for today if it does not exist.
 cron.schedule('* 4 * * *', async () => {
-  const todayKey = db.getTodayKey();
+  const todayKey = Database.getTodayKey();
   const todayList = await db.getTodoList(todayKey);
   if (todayList == null) {
-    const yesterdaylist = await db.getTodoList(db.getYesterdayKey());
+    const yesterdayList = await db.getTodoList(Database.getYesterdayKey());
     todoContract.saveListHash(fromAddress, yesterdayList, todayKey);
     console.log(`Today, ${todayKey}, has no list; creating one.`);
     const result = await db.upsertList(getTodayKey, []);

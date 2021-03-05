@@ -1,10 +1,11 @@
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const url = 'mongodb://127.0.0.1:27017';
-const dateKeyRegex = /\d{4}-\d+-\d+/; // YYYY-[M]M-[D]D
 const millisInADay = 1000 * 60 * 60 * 24;
 
 module.exports = class Database {
+  static dateKeyRegex = /\d{4}-\d+-\d+/; // YYYY-[M]M-[D]D
+
   constructor() {
     this.dbName = 'todo';
     this.listsCollection = 'lists';
@@ -33,7 +34,7 @@ module.exports = class Database {
 
   async upsertTodo(newTodo) {
     console.log('Upserting todo', newTodo);
-    const dateKey = this.getTodayKey();
+    const dateKey = Database.getTodayKey();
     const list = await this.getTodoList(dateKey);
     const { todos } = list;
     this._upsertTodoMaintainingOrder(todos, newTodo);
@@ -84,7 +85,7 @@ module.exports = class Database {
   }
 
   async deleteTodo(description) {
-    const dateKey = this.getTodayKey();
+    const dateKey = Database.getTodayKey();
     const list = await this.getTodoList(dateKey);
     if (!list) { return "Error: no list found for today" }
     const _result = await this.backupList(dateKey);
@@ -102,13 +103,13 @@ module.exports = class Database {
   }
 
   async getTodoList(dateKey) {
-    assert(dateKeyRegex.test(dateKey));
+    assert(Database.dateKeyRegex.test(dateKey));
     console.log(`Getting list for ${dateKey}`);
     return await this.query(this.listsCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
   async upsertList(dateKey, todos) {
-    assert(dateKeyRegex.test(dateKey));
+    assert(Database.dateKeyRegex.test(dateKey));
     if (todos.empty) {
       const _result = await this.backupList(dateKey);
     }
@@ -119,14 +120,14 @@ module.exports = class Database {
   }
 
   async deleteList(dateKey) {
-    assert(dateKeyRegex.test(dateKey));
+    assert(Database.dateKeyRegex.test(dateKey));
     const _result = await this.backupList(dateKey);
     return await this.query(this.listsCollection, async collection => await collection.deleteOne({ date: { $eq: dateKey } }));
   }
 
   // Call before any delete operation
   async backupList(dateKey) {
-    assert(dateKeyRegex.test(dateKey));
+    assert(Database.dateKeyRegex.test(dateKey));
     const { todos } = await this.getTodoList(dateKey);
     const filter = { date: `${dateKey}-backup` };
     const upsert = { $set: { todos } };
@@ -135,7 +136,7 @@ module.exports = class Database {
   }
 
   async restoreList(dateKey) {
-    assert(dateKeyRegex.test(dateKey));
+    assert(Database.dateKeyRegex.test(dateKey));
     const list = await this.getTodoList(`${dateKey}-backup`);
     if (!list) {
       throw new Error(`No backup found for date ${dateKey}`);
@@ -214,14 +215,14 @@ module.exports = class Database {
 
   // Utils
 
-  getDayKey(timestamp) {
+  static getDayKey(timestamp) {
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
   }
-  getTodayKey() {
+  static getTodayKey() {
     return this.getDayKey(Date.now());
   }
-  getYesterdayKey() {
+  static getYesterdayKey() {
     return this.getDayKey(Date.now() - millisInADay);
   }
 
