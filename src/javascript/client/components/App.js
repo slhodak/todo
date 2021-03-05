@@ -37,9 +37,9 @@ export default class App extends React.Component {
     this.updateListInState = this.updateListInState.bind(this);
   }
   componentDidMount() {
-    this.getList(this.getTodayKey());
+    this.getList(App.getTodayKey());
   }
-  getTodayKey() {
+  static getTodayKey() {
     let today = new Date(Date.now())
     return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
   }
@@ -122,7 +122,7 @@ export default class App extends React.Component {
   }
   restoreList() {
     console.log('Restoring list from backup, if any');
-    fetch(`/list/restore?date=${this.getTodayKey()}`)
+    fetch(`/list/restore?date=${App.getTodayKey()}`)
     .then(res => this.updateListInState(res))
     .catch(err => console.error('Error restoring list', err));
   }
@@ -187,7 +187,7 @@ export default class App extends React.Component {
     return (
       <div>
         <div className='header-area'>
-          <h1>todo {this.getTodayKey()}</h1>
+          <h1>todo {App.getTodayKey()}</h1>
         </div>
         <div className='app-area'>
           <div className='left-panel'>
