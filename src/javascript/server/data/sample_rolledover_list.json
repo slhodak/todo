@@ -1,0 +1,36 @@
+{
+    "list": {
+        "_id": "60409d166f3073c9e6982d2c",
+        "date": "2021-2-4",
+        "todos": [
+            {
+                "description": "tact",
+                "need": true,
+                "want": false,
+                "rating": 1,
+                "complete": false
+            },
+            {
+                "description": "parking ticket call",
+                "need": true,
+                "want": false,
+                "rating": 1,
+                "complete": false
+            },
+            {
+                "description": "todo: statistics improvement",
+                "need": true,
+                "want": true,
+                "rating": 0,
+                "complete": false
+            },
+            {
+                "description": "taylini song",
+                "need": true,
+                "want": true,
+                "rating": 0,
+                "complete": false
+            }
+        ]
+    }
+}

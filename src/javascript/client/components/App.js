@@ -110,13 +110,7 @@ export default class App extends React.Component {
   }
   resetList() {
     console.log('Resetting list');
-    fetch('/list', {
-      method: 'POST',
-      headers: [
-        ['Content-Type', 'application/json']
-      ],
-      body: JSON.stringify([])
-    })
+    fetch('/list/new', { method: 'POST' })
     .then(res => this.updateListInState(res))
     .catch(err => console.error('Error resetting list', err));
   }
@@ -208,7 +202,7 @@ export default class App extends React.Component {
               <button className='add-todo' onClick={this.addTodo}>Add</button>
             </div>
             <div className='todo-list'>
-              <div className='todo-row'>
+              <div className='todo-row header-row'>
                 <div className='description'>Description</div>
                 <div className='boolean-factor'>Need</div>
                 <div className='boolean-factor'>Want</div>
@@ -240,10 +234,14 @@ export default class App extends React.Component {
             <div className='oppose-entropy'>
               <div className='meditate'>
                 <div>Meditate</div>
-                <label htmlFor='meditate-1'>1</label>
-                <input type='checkbox' name='meditate-1'></input>
-                <label htmlFor='meditate-2'>2</label>
-                <input type='checkbox' name='meditate-2'></input>
+                <div>
+                  <label htmlFor='meditate-1'>1</label>
+                  <input type='checkbox' name='meditate-1'></input>
+                </div>
+                <div>
+                  <label htmlFor='meditate-2'>2</label>
+                  <input type='checkbox' name='meditate-2'></input>
+                </div>
               </div>
               <div className='exercise'>
                 <div>Exercise</div>

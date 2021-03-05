@@ -32,6 +32,13 @@ module.exports = class Database {
 
   // Todo Item Operations
 
+  async getDaysIncompleteNeeds(dateKey) {
+    assert(Database.dateKeyRegex.test(dateKey));
+    const list = await this.getTodoList(Database.getYesterdayKey());
+    const { todos } = list;
+    return todos.filter(todo => todo.need && !todo.complete);
+  }
+
   async upsertTodo(newTodo) {
     console.log('Upserting todo', newTodo);
     const dateKey = Database.getTodayKey();
@@ -110,9 +117,8 @@ module.exports = class Database {
 
   async upsertList(dateKey, todos) {
     assert(Database.dateKeyRegex.test(dateKey));
-    if (todos.empty) {
-      const _result = await this.backupList(dateKey);
-    }
+    // Backup every time, a new list might not be empty because it would include incomplete "need" items
+    const _result = await this.backupList(dateKey);
     const filter = { date: dateKey };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
@@ -128,7 +134,11 @@ module.exports = class Database {
   // Call before any delete operation
   async backupList(dateKey) {
     assert(Database.dateKeyRegex.test(dateKey));
-    const { todos } = await this.getTodoList(dateKey);
+    let todos = [];  // New day, null list
+    const list = await this.getTodoList(dateKey);
+    if (list) {
+     todos = list.todos;
+    }
     const filter = { date: `${dateKey}-backup` };
     const upsert = { $set: { todos } };
     const options = { upsert: true };
@@ -155,7 +165,7 @@ module.exports = class Database {
     // from 8 days ago to 1 day ago; last week ended yesterday (Sunday), today is Monday
     let weeksDays = [];
     for (let i = 7; i > 0; i--) {
-      weeksDays.push(this.getDayKey(now - (millisInADay * i)));
+      weeksDays.push(Database.getDayKey(now - (millisInADay * i)));
     }
     // console.log(weeksDays);
     // get lists for every day in the week
@@ -220,10 +230,10 @@ module.exports = class Database {
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
   }
   static getTodayKey() {
-    return this.getDayKey(Date.now());
+    return Database.getDayKey(Date.now());
   }
   static getYesterdayKey() {
-    return this.getDayKey(Date.now() - millisInADay);
+    return Database.getDayKey(Date.now() - millisInADay);
   }
 
   validateTodo(todo) {

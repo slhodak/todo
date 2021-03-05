@@ -58,13 +58,14 @@ app.get('/list', async (req, res) => {
   }
 });
 
-app.post('/list', async (req, res) => {
+app.post('/list/new', async (_req, res) => {
   try {
-    const todos = req.body;
-    const _result = await db.upsertList(Database.getTodayKey(), todos);
-    const list = await db.getTodoList(Database.getTodayKey());
+    const yesterdaysIncompleteNeeds = await db.getDaysIncompleteNeeds(Database.getYesterdayKey());
+    // Initialize a list with the incomplete "need" items of yesterday
+    const _result = await db.upsertList(Database.getTodayKey(), yesterdaysIncompleteNeeds);
+    const list = await db.getTodoList(Database.getTodayKey()); // excessive db call but it verifies that correct list is there
     res.send({ list });
-  } catch (err) {
+  } catch (error) {
     console.error(error);
     res.status(500).send({ error: error.message });
   }

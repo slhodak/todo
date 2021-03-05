@@ -3,32 +3,36 @@
 html, input, button {
   font-family: 'Noto Sans JP', sans-serif;
   font-size: 1em;
+  font-weight: 300;
 }
 
 h1, h2, h3 {
   margin: 0px;
   padding: 0px;
+  font-weight: 300;
+}
+
+body {
+  margin-right: 10px;
 }
 
 /* Overall App Areas */
-button {
-  border-radius: 5px;
-}
 .header-area {
   font-style: italic;
 }
 .app-area {
   display: flex;
+  margin-top: 10px;
 }
 .left-panel {
   width: 70%;
-  margin: 10px 10px 0px 0px;
+  margin-right: 10px;
 }
 .right-panel {
   width: 30%;
-  margin: 10px 10px 0px 0px;
 }
 .bottom-area {
+  margin-top: 10px;
   padding: 0px;
 }
 
@@ -36,7 +40,6 @@ button {
 .new-todo-container {
   display: flex;
   border: 3px solid rgb(73, 201, 109);
-  border-radius: 10px;
   padding: 20px;
 }
 .input-details {
@@ -44,12 +47,9 @@ button {
   display: flex;
   flex-direction: column;
 }
-.description {
-  width: 98%;
-  border-radius: 5px;
-}
 .add-todo {
   padding: 0px 20px;
+  margin-left: 5px;
   height: 1.8em;
   background-color: rgb(91, 230, 130);
 }
@@ -59,25 +59,29 @@ button {
   align-self: flex-end;
   background: linear-gradient(90deg, rgb(81, 255, 72), rgb(0, 238, 255));
   padding: 5px;
-  margin: 3px 3px 3px 0px;
-  border-radius: 5px;
+  margin: 3px 0px;
   width: 50%;
   max-width: 200px;
 }
 
 /* Todo List Area */
 .todo-list {
-  margin: 10px 0px;
-  padding: 5px;
-  border: 3px solid rgb(109, 255, 96);
-  border-radius: 10px;
+  margin-top: 10px;
+  padding: 0px 3px;
+  border: 3px solid rgb(100, 218, 190);
 }
 .todo-row {
   display: flex;
+  padding: 2px 4px;
+}
+.header-row {
+  font-weight: 200;
 }
 .todo-item {
   border-top: 1px solid rgb(179, 179, 179);
-  padding: 3px 0px;
+}
+.todo-item:hover {
+  background-color: rgba(0, 0, 0, 0.15);
 }
 /* There are 3 of these per row */
 .todo-row > .boolean-factor {
@@ -114,20 +118,20 @@ button {
 }
 
 
+/* Right Panel */
+.functions, .info {
+  background-color: rgb(232, 232, 232);
+  /* border: 3px solid rgb(147, 147, 147); */
+}
+
 /* Functions Area */
 .functions {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  background-color: lightgray;
-  border: 3px solid rgb(97, 36, 14);
-  border-radius: 10px;
 }
 .functions button {
   margin: 2px 0px;
-}
-.address-input, .datekey-input {
-  border-radius: 5px;
 }
 .login {
   background-color: rgb(71, 173, 228);
@@ -144,15 +148,14 @@ button {
 .info {
   display: flex;
   flex-direction: column;
-  background-color: lightgray;
-  border: 3px solid rgb(0, 0, 0);
-  border-radius: 10px;
   margin-top: 10px;
   padding: 10px;
 }
 .logged-in-address, .found-list-hash {
   word-wrap: break-word;
   background-color: black;
+  margin: 1px;
+  border-radius: 2px;
   color: #00ff41;
   font-family: monospace;
   padding: 2px;
@@ -164,26 +167,26 @@ button {
   margin-top: 10px;
 }
 .meditate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   flex-grow: 1;
   margin-right: 4p;
   padding: 10px;
-  border: 3px solid rgb(94, 2, 150);
-  border-radius: 10px;
-  background: linear-gradient(25deg, white, rgb(0, 251, 255), rgb(101, 6, 255), rgb(0, 0, 0));
+  background-color:rgb(162, 249, 255);
 }
 .exercise {
   flex-grow: 1;
   margin-left: 4px;
   padding: 10px;
-  border: 3px solid rgb(68, 80, 68);
-  border-radius: 10px;
   color: rgb(228, 228, 228);
-  background-color: rgb(67, 60, 60);
+  background-color: rgb(55, 0, 35);
 }
 
 /* Statistics */
 .stats {
   border: 3px solid rgb(118, 173, 255);
-  border-radius: 10px;
   padding: 10px;
 }
+
+

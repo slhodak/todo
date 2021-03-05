@@ -1,28 +1,28 @@
 {
     "list": {
-        "_id": "603fd3146f3073c9e6982304",
-        "date": "2021-2-3",
+        "_id": "60409d166f3073c9e6982d2c",
+        "date": "2021-2-4",
         "todos": [
             {
-                "description": "tact",
+                "description": "Tact",
                 "need": true,
                 "want": false,
                 "rating": 1,
                 "complete": false
             },
             {
-                "description": "pay dermatology invoice",
+                "description": "call advekit",
                 "need": true,
                 "want": false,
                 "rating": 1,
-                "complete": true
+                "complete": false
             },
             {
-                "description": "send linkedin messages",
+                "description": "wrist exercise",
                 "need": true,
                 "want": false,
                 "rating": 1,
-                "complete": true
+                "complete": false
             },
             {
                 "description": "parking ticket call",
@@ -32,21 +32,14 @@
                 "complete": false
             },
             {
-                "description": "schwab correction update intuit",
-                "need": true,
-                "want": false,
-                "rating": 1,
-                "complete": true
-            },
-            {
-                "description": "ask anchorage about interview",
+                "description": "More Tact",
                 "need": true,
                 "want": true,
                 "rating": 0,
-                "complete": true
+                "complete": false
             },
             {
-                "description": "todo: statistics improvement",
+                "description": "todo: track meditate/exercise",
                 "need": true,
                 "want": true,
                 "rating": 0,
@@ -60,38 +53,52 @@
                 "complete": false
             },
             {
-                "description": "todo: prevent unwanted list reset",
-                "need": true,
-                "want": true,
-                "rating": 0,
-                "complete": false
-            },
-            {
-                "description": "todo: style list",
+                "description": "todo: monthly stats",
                 "need": false,
                 "want": true,
                 "rating": -1,
                 "complete": false
             },
             {
-                "description": "todo: blockchain read function",
+                "description": "todo: blockchain read",
                 "need": false,
                 "want": true,
                 "rating": -1,
                 "complete": false
             },
             {
-                "description": "todo: add exercise section",
+                "description": "study/practice multithreading",
                 "need": false,
                 "want": true,
                 "rating": -1,
                 "complete": false
             },
             {
-                "description": "study pgp",
+                "description": "stake ADA",
                 "need": false,
                 "want": true,
                 "rating": -1,
+                "complete": false
+            },
+            {
+                "description": "todo: clever stat memoization (date sub-range)",
+                "need": false,
+                "want": true,
+                "rating": -1,
+                "complete": false
+            },
+            {
+                "description": "todo: rollover incomplete \"need\"",
+                "need": false,
+                "want": true,
+                "rating": -1,
+                "complete": false
+            },
+            {
+                "description": "study yield farming",
+                "need": false,
+                "want": false,
+                "rating": -2,
                 "complete": false
             }
         ]
