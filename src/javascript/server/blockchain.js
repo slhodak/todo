@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Web3 = require('web3');
 const { keccak256 } = require('ethereum-cryptography/keccak');
-const contractAddress = '0x556f2f5Dbb1C05BC9bCCC78EF539D1E08757d03E'; // in dev env, copy from deploy receipt
+const contractAddress = '0xDbB148669C41aB7a2289D8539918C73abB202AA3'; // in dev env, copy from deploy receipt
 
 module.exports = class TodoContract {
   constructor() {
@@ -21,12 +21,15 @@ module.exports = class TodoContract {
         })
         .on('error', err => console.error('Error sending saveListHash', err));
   }
-  listHashes(address, dayKey) {
-    this.contract.methods.listHashes(address, dayKey).call({ from: address })
-      .on('confirmation', (confirmationNumber, receipt) => {
-        console.log('confirmation number', confirmationNumber);
-        console.log('receipt', receipt);
-      })
-      .on('error', err => console.error('Error calling listHashes', err));
+  async listHashes(address, dayKey) {
+    return new Promise((resolve, reject) => {
+      this.contract.methods.listHashes(address, dayKey).call({ from: address }, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
   }
 }

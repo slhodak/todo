@@ -156,7 +156,7 @@ module.exports = class Database {
     for (let i = 7; i > 0; i--) {
       weeksDays.push(this.getDayKey(now - (millisInADay * i)));
     }
-    console.log(weeksDays);
+    // console.log(weeksDays);
     // get lists for every day in the week
     let lists = [];
     for (let i = 0; i < weeksDays.length; i++ ) {

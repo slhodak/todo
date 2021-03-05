@@ -5,6 +5,11 @@ html, input, button {
   font-size: 1em;
 }
 
+h1, h2, h3 {
+  margin: 0px;
+  padding: 0px;
+}
+
 /* Overall App Areas */
 button {
   border-radius: 5px;
@@ -17,10 +22,14 @@ button {
 }
 .left-panel {
   width: 70%;
+  margin: 10px 10px 0px 0px;
 }
 .right-panel {
   width: 30%;
-  margin-left: 8px;
+  margin: 10px 10px 0px 0px;
+}
+.bottom-area {
+  padding: 0px;
 }
 
 /* Add Todo Area */
@@ -109,10 +118,10 @@ button {
 .functions {
   display: flex;
   flex-direction: column;
+  padding: 10px;
   background-color: lightgray;
   border: 3px solid rgb(97, 36, 14);
   border-radius: 10px;
-  padding: 10px;
 }
 .functions button {
   margin: 2px 0px;
@@ -138,8 +147,8 @@ button {
   background-color: lightgray;
   border: 3px solid rgb(0, 0, 0);
   border-radius: 10px;
-  padding: 10px;
   margin-top: 10px;
+  padding: 10px;
 }
 .logged-in-address {
   word-wrap: break-word;
@@ -152,11 +161,11 @@ button {
 /* Meditate & Exercise Area */
 .oppose-entropy {
   display: flex;
-  /* justify-content: space-between; */
+  margin-top: 10px;
 }
 .meditate {
   flex-grow: 1;
-  margin: 10px 4px 0px 0px;
+  margin-right: 4p;
   padding: 10px;
   border: 3px solid rgb(94, 2, 150);
   border-radius: 10px;
@@ -164,7 +173,7 @@ button {
 }
 .exercise {
   flex-grow: 1;
-  margin: 10px 0px 0px 4px;
+  margin-left: 4px;
   padding: 10px;
   border: 3px solid rgb(68, 80, 68);
   border-radius: 10px;
@@ -174,5 +183,7 @@ button {
 
 /* Statistics */
 .stats {
-  border: 1px solid black;
+  border: 3px solid rgb(118, 173, 255);
+  border-radius: 10px;
+  padding: 10px;
 }

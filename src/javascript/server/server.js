@@ -93,9 +93,14 @@ app.get('/list/restore', async (req, res) => {
 });
 
 // Stats Fetching
-app.get('/stats', (req, res) => {
-  
-  // list.todos.map(todo => <div></div>)}
+app.get('/stats/week', async (_req, res) => {
+  try {
+    // Memoize this in 'aggregates' db collection
+    res.send({ stats: await db.generatePreviousWeekStats() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: error.message });
+  }
 });
 
 // Blockchain Operations
@@ -111,7 +116,18 @@ app.post('/blockchain/login', (req, res) => {
     res.send({ address: fromAddress });
   } catch (err) {
     console.error(err);
-    res.status(500).send(err.message);
+    res.status(500).send({ error: err.message });
+  }
+});
+
+app.get('/blockchain/listHash', async(req, res) => {
+  try {
+    const { date } = req.query;
+    let data = await todoContract.listHashes(fromAddress, date);
+    res.send({ hash: data });
+  } catch (error) {
+    console.error(err);
+    res.status(500).send({ error: err.message });
   }
 });
 
@@ -128,7 +144,7 @@ app.post('/blockchain/saveListHash', async (_req, res) => {
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
-    res.status(500).send(err.message);
+    res.status(500).send({ error: err.message });
   }
 });
 
