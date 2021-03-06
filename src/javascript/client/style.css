@@ -121,7 +121,6 @@ body {
 /* Right Panel */
 .functions, .info {
   background-color: rgb(232, 232, 232);
-  /* border: 3px solid rgb(147, 147, 147); */
 }
 
 /* Functions Area */
@@ -144,17 +143,15 @@ body {
   background-color: rgb(136, 198, 232);
 }
 
-/* Info Area */
-.info {
-  display: flex;
-  flex-direction: column;
+/* Blockchain Area */
+.blockchain {
   margin-top: 10px;
-  padding: 10px;
 }
+
 .logged-in-address, .found-list-hash {
+  margin-top: 4px;
   word-wrap: break-word;
   background-color: black;
-  margin: 1px;
   border-radius: 2px;
   color: #00ff41;
   font-family: monospace;

@@ -1,6 +1,7 @@
 import React from 'react';
 import Todo from './Todo';
 import Stats from './Stats';
+import Blockchain from './Blockchain';
 import '../style.css';
 
 export default class App extends React.Component {
@@ -15,12 +16,7 @@ export default class App extends React.Component {
     };
     this.state = {
       todos: [],
-      newTodo: Object.assign({}, this.blankTodo),
-      addressInput: '',
-      loggedInAddres: '',
-      dateKeyToSearch: '',
-      foundListHash: '',
-      dateKeySearched: ''
+      newTodo: Object.assign({}, this.blankTodo)
     };
     this.getList = this.getList.bind(this);
     this.handleAddChange = this.handleAddChange.bind(this);
@@ -29,11 +25,6 @@ export default class App extends React.Component {
     this.deleteTodo = this.deleteTodo.bind(this);
     this.resetList = this.resetList.bind(this);
     this.restoreList = this.restoreList.bind(this);
-    this.handleAddressChange = this.handleAddressChange.bind(this);
-    this.loginToBlockchain = this.loginToBlockchain.bind(this);
-    this.saveHashToBlockchain = this.saveHashToBlockchain.bind(this);
-    this.handleDateKeyChange = this.handleDateKeyChange.bind(this);
-    this.getListHash = this.getListHash.bind(this);
     this.updateListInState = this.updateListInState.bind(this);
   }
   componentDidMount() {
@@ -120,46 +111,6 @@ export default class App extends React.Component {
     .then(res => this.updateListInState(res))
     .catch(err => console.error('Error restoring list', err));
   }
-  handleAddressChange(event) {
-    this.setState({ addressInput: event.target.value });
-  }
-  loginToBlockchain() {
-    const { addressInput } = this.state;
-    fetch(`/blockchain/login?address=${addressInput}`, { method: 'POST' })
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        throw new Error(data.error);
-      } else {
-        this.setState({ loggedInAddress: data.address });
-      }
-    })
-    .catch(err => console.error('Error logging in', err));
-    this.setState({ addressInput: '' });
-  }
-  saveHashToBlockchain() {
-    fetch('/blockchain/saveListHash', { method: 'POST' })
-    .catch(err => console.error('Error clearing list', err));
-  }
-  handleDateKeyChange(e) {
-    this.setState({ dateKeyToSearch: e.target.value });
-  }
-  getListHash() {
-    const { dateKeyToSearch } = this.state;
-    fetch(`/blockchain/listHash?date=${dateKeyToSearch}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        throw new Error(data.error);
-      } else {
-        this.setState({ 
-          foundListHash: data.hash,
-          dateKeySearched: dateKeyToSearch
-        });
-      }
-    })
-    .catch(err => console.error('Error getting list hash', err));
-  }
   updateListInState(response) {
     response.json()
     .then(data => {
@@ -174,10 +125,7 @@ export default class App extends React.Component {
     .catch(err => console.error('Error updating list', err));
   }
   render() {
-    const {
-      todos, newTodo, loggedInAddress, addressInput,
-      dateKeyToSearch, foundListHash, dateKeySearched
-    } = this.state;
+    const { todos, newTodo } = this.state;
     return (
       <div>
         <div className='header-area'>
@@ -215,22 +163,10 @@ export default class App extends React.Component {
           </div>
           <div className='right-panel'>
             <div className='functions'>
-              <label htmlFor='address'>Public Address</label>
-              <input className='address-input' type='text' onChange={this.handleAddressChange} name='public-address' value={addressInput}></input>
-              <button onClick={this.loginToBlockchain} className='login'>Log in to Blockchain</button>
               <button onClick={this.resetList} className='resetList'>Reset List</button>
-              <button onClick={this.saveHashToBlockchain} className='save-hash'>Save Hash</button>
               <button onClick={this.restoreList} className='restore-list'>Restore List (Undo Erase or Reset)</button>
-              <label htmlFor='datekey'>Date Key</label>
-              <input className='datekey-input' type='text' onChange={this.handleDateKeyChange} name='datekey' value={dateKeyToSearch}></input>
-              <button onClick={this.getListHash} className='restore-list'>Search for Hash</button>
             </div>
-            <div className='info'>
-              <div>Logged in as:</div>
-              <div className='logged-in-address'>{loggedInAddress || '0x0'}</div>
-              <div>Hash for list on {dateKeySearched || '0000-0-0'}:</div>
-              <div className='found-list-hash'>{foundListHash || '0x0'}</div>
-            </div>
+            <Blockchain />
             <div className='oppose-entropy'>
               <div className='meditate'>
                 <div>Meditate</div>
