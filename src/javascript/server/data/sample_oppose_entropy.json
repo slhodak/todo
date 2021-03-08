@@ -1,5 +1,6 @@
 {
   "date": "2021-2-5",
-  "meditate": 1,
-  "exercise": 1
+  "meditate1": true,
+  "meditate2": false,
+  "exercise": false
 }

@@ -158,31 +158,31 @@ module.exports = class Database {
   }
 
   // OpposeEntropy Operations
+  async initEntropyTasks(dateKey) {
+    assert(Database.dateKeyRegex.test(dateKey));
+    console.debug('Initializing entropy tasks');
+    const document = { date: dateKey, meditate1: false, meditate2: false, exercise: false };
+    return await this.query(this.opposeEntropyCollection, async collection => await collection.insertOne(document));
+  }
+
   async getEntropyTasks(dateKey) {
+    assert(Database.dateKeyRegex.test(dateKey));
     console.debug('Getting entropy tasks');
     return await this.query(this.opposeEntropyCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
-  // Inform the collection that you completed one of the entropy-opposition tasks
-  async updateEntropyTask(type, change) {
+  // Set the bit (true/false) of one of the entropy-opposition tasks
+  async updateEntropyTask(type, bit) {
     const date = Database.getTodayKey();
     const filter = { date };
-    const update = { $inc: { [type]: change } };
-    const options = { upsert: true };
-    return await this.query(this.opposeEntropyCollection, async collection => await collection.updateOne(filter, update, options));
-  }
-  // Inform the collection that you did not complete one of the entropy-opposition tasks
-  async unmarkEntropyOpposed(type) {
-    const date = Database.getTodayKey();
-    const filter = { date };
-    const update = { $inc: { [type]: -1 } };
+    const update = { $set: { [type]: bit } };
     const options = { upsert: true };
     return await this.query(this.opposeEntropyCollection, async collection => await collection.updateOne(filter, update, options));
   }
 
   // Statistics Operations
 
-  // Run once a week
+  // Run once a week (currently runs every page load...)
   async generatePreviousWeekStats() {
     // sum completed and total tasks of all days in week
     const now = Date.now();

@@ -97,9 +97,13 @@ app.get('/list/restore', async (req, res) => {
 // Entropy Opposition
 app.get('/entropy', async (_req, res) => {
   try {
-    const result = await db.getEntropyTasks(Database.getTodayKey());
-    const { meditate, exercise } = result;
-    res.send({ meditate, exercise });
+    let result = await db.getEntropyTasks(Database.getTodayKey());
+    if (result === null) {
+      await db.initEntropyTasks(Database.getTodayKey());
+      result = await db.getEntropyTasks(Database.getTodayKey());
+    }
+    const { meditate1, meditate2, exercise } = result;
+    res.send({ meditate1, meditate2, exercise });
   } catch(error) {
       console.error(error);
     res.status(500).send({ error: error.message });
@@ -109,8 +113,9 @@ app.get('/entropy', async (_req, res) => {
 app.post('/entropy', async (req, res) => {
   try {
     const { type, change } = req.query;
-    const _result = await db.updateEntropyTask(type, parseInt(change));
-    res.sendStatus(200);
+    const _result = await db.updateEntropyTask(type, parseBool(change));
+    const { meditate1, meditate2, exercise } = await db.getEntropyTasks(Database.getTodayKey());
+    res.status(200).send({ meditate1, meditate2, exercise });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: error.message });
@@ -118,7 +123,7 @@ app.post('/entropy', async (req, res) => {
 });
 
 // Stats Fetching
-app.get('/stats/week', async (_req, res) => {
+app.get('/stats/week/todos', async (_req, res) => {
   try {
     // Memoize this in 'aggregates' db collection
     res.send({ stats: await db.generatePreviousWeekStats() });
@@ -184,7 +189,7 @@ app.listen(3000, () => {
 cron.schedule('* 4 * * *', async () => {
   const todayKey = Database.getTodayKey();
   const todayList = await db.getTodoList(todayKey);
-  if (todayList == null) {
+  if (todayList === null) {
     const yesterdayList = await db.getTodoList(Database.getYesterdayKey());
     todoContract.saveListHash(fromAddress, yesterdayList, todayKey);
     console.log(`Today, ${todayKey}, has no list; creating one.`);
@@ -192,3 +197,18 @@ cron.schedule('* 4 * * *', async () => {
     console.log(result.result);
   }
 });
+
+// Utils
+
+function parseBool(string) {
+  if (typeof string != 'string') {
+    throw new Error(`Parameter given was not a string; it was a ${typeof string}`);
+  }
+  const lowercase = string.toLowerCase();
+  if (lowercase === 'true') {
+    return true;
+  } else if (lowercase === 'false') {
+    return false;
+  }
+  throw new Error(`String was neither "true" nor "false"; it was "${lowercase}"`);
+}
