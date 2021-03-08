@@ -1,5 +1,6 @@
 import React from 'react';
 import Todo from './Todo';
+import OpposeEntropy from './OpposeEntropy';
 import Stats from './Stats';
 import Blockchain from './Blockchain';
 import '../style.css';
@@ -157,7 +158,7 @@ export default class App extends React.Component {
                 <div className='complete'>Complete</div>
                 <div className='erase-todo-spacer'></div>
               </div>
-              {/* newly added items go here and get the Have/Want columns, which rearrange them */}
+              {/* newly added items go here and get the Need/Want columns, which rearrange them */}
               {todos ? todos.map(item => <Todo item={item} handleTodoChange={this.handleTodoChange} deleteTodo={this.deleteTodo}/>) : null}
             </div>
           </div>
@@ -167,24 +168,7 @@ export default class App extends React.Component {
               <button onClick={this.restoreList} className='restore-list'>Restore List (Undo Erase or Reset)</button>
             </div>
             <Blockchain />
-            <div className='oppose-entropy'>
-              <div className='meditate'>
-                <div>Meditate</div>
-                <div>
-                  <label htmlFor='meditate-1'>1</label>
-                  <input type='checkbox' name='meditate-1'></input>
-                </div>
-                <div>
-                  <label htmlFor='meditate-2'>2</label>
-                  <input type='checkbox' name='meditate-2'></input>
-                </div>
-              </div>
-              <div className='exercise'>
-                <div>Exercise</div>
-                <label htmlFor='exercise'>1</label>
-                <input type='checkbox' name='exercise'></input>
-              </div>
-            </div>
+            <OpposeEntropy />
           </div>
         </div>
         <div className='bottom-area'>

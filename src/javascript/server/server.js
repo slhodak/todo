@@ -94,6 +94,29 @@ app.get('/list/restore', async (req, res) => {
   }
 });
 
+// Entropy Opposition
+app.get('/entropy', async (_req, res) => {
+  try {
+    const result = await db.getEntropyTasks(Database.getTodayKey());
+    const { meditate, exercise } = result;
+    res.send({ meditate, exercise });
+  } catch(error) {
+      console.error(error);
+    res.status(500).send({ error: error.message });
+  }
+});
+
+app.post('/entropy', async (req, res) => {
+  try {
+    const { type, change } = req.query;
+    const _result = await db.updateEntropyTask(type, parseInt(change));
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: error.message });
+  }
+});
+
 // Stats Fetching
 app.get('/stats/week', async (_req, res) => {
   try {

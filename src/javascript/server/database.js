@@ -10,6 +10,7 @@ module.exports = class Database {
     this.dbName = 'todo';
     this.listsCollection = 'lists';
     this.statsCollection = 'stats';
+    this.opposeEntropyCollection = 'opposeEntropy';
   }
 
   // Complex hybrid async/callback design just so queriers don't need to close client?
@@ -19,7 +20,7 @@ module.exports = class Database {
       client = await MongoClient.connect(url, { useUnifiedTopology: true });
       assert.notStrictEqual(null, client);
       const db = client.db(this.dbName);
-      console.log(`Connected to db '${db.databaseName}' for method '${method}'`);
+      // console.log(`Connected to db '${db.databaseName}' for method '${method}'`);
       const collection = db.collection(collectionName);
       const result = await method(collection);
       await client.close();
@@ -154,6 +155,29 @@ module.exports = class Database {
     const { todos } = list;
     const _result = await this.upsertList(dateKey, todos);
     return list;
+  }
+
+  // OpposeEntropy Operations
+  async getEntropyTasks(dateKey) {
+    console.debug('Getting entropy tasks');
+    return await this.query(this.opposeEntropyCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
+  }
+
+  // Inform the collection that you completed one of the entropy-opposition tasks
+  async updateEntropyTask(type, change) {
+    const date = Database.getTodayKey();
+    const filter = { date };
+    const update = { $inc: { [type]: change } };
+    const options = { upsert: true };
+    return await this.query(this.opposeEntropyCollection, async collection => await collection.updateOne(filter, update, options));
+  }
+  // Inform the collection that you did not complete one of the entropy-opposition tasks
+  async unmarkEntropyOpposed(type) {
+    const date = Database.getTodayKey();
+    const filter = { date };
+    const update = { $inc: { [type]: -1 } };
+    const options = { upsert: true };
+    return await this.query(this.opposeEntropyCollection, async collection => await collection.updateOne(filter, update, options));
   }
 
   // Statistics Operations
