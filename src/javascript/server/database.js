@@ -182,25 +182,58 @@ module.exports = class Database {
 
   // Statistics Operations
 
-  // Run once a week (currently runs every page load...)
-  async generatePreviousWeekStats() {
-    // sum completed and total tasks of all days in week
+  async generatePreviousWeekEntropyStats() {
     const now = Date.now();
     // from 8 days ago to 1 day ago; last week ended yesterday (Sunday), today is Monday
-    let weeksDays = [];
-    for (let i = 7; i > 0; i--) {
-      weeksDays.push(Database.getDayKey(now - (millisInADay * i)));
+    let tasks = [];
+    for (let i = 1; i < 8; i++ ) {
+      tasks.push(await this.getEntropyTasks(Database.getKeyNDaysBefore(now, i)));
     }
-    // console.log(weeksDays);
+    // include this metadata better, in a less-bound way
+    const entropy = {
+      meditate: {
+        completed: 0,
+        total: 7
+      },
+      exercise: {
+        completed: 0,
+        total: 7
+      }
+    };
+    // add up all the meditate1, meditate2, and exercises in the days found
+    for (let i = 0; i < tasks.length; i++) {
+      if (!tasks[i]) {
+        continue;
+      }
+      if (tasks[i].meditate1)  {
+        entropy.meditate.completed += 1;
+      }
+      if (tasks[i].meditate2)  {
+        entropy.meditate.completed += 1;
+      }
+      if (tasks[i].exercise) {
+        entropy.exercise.completed += 1;
+      }
+    }
+    return {
+      type: "entropy",
+      startDate: Database.getKeyNDaysBefore(now, 8),
+      endDate: Database.getKeyNDaysBefore(now, 1),
+      entropy: entropy
+    };
+  }
+
+  // Run once a week (currently runs every page load...)
+  async generatePreviousWeekTodoStats() {
+    // sum completed and total tasks of all days in week
+    const now = Date.now();
     // get lists for every day in the week
     let lists = [];
-    for (let i = 0; i < weeksDays.length; i++ ) {
-      lists.push(await this.getTodoList(weeksDays[i]));
+    for (let i = 1; i < 8; i++ ) {
+      lists.push(await this.getTodoList(Database.getKeyNDaysBefore(now, i)));
     }
-    let summary = {
-      type: "week",
-      startDate: weeksDays[0],
-      endDate: weeksDays[6],
+    // include this metadata better, in a less-bound way
+    const todo = {
       need: {
         completed: 0,
         total: 0
@@ -228,13 +261,18 @@ module.exports = class Database {
       let { todos } = lists[i];
       for (let i = 0; i < todos.length; i++) {
         let type = zeroIndexedRatings[todos[i].rating + 2];
-        summary[type].total += 1;
+        todo[type].total += 1;
         if (todos[i].complete === true) {
-          summary[type].completed += 1; 
+          todo[type].completed += 1; 
         }
       }
     }
-    return summary; // write to db
+    return {
+      type: "week",
+      startDate: Database.getKeyNDaysBefore(now, 8),
+      endDate: Database.getKeyNDaysBefore(now, 1),
+      todo: todo
+    }; // write to db
   }
 
   // Run once a month
@@ -258,6 +296,9 @@ module.exports = class Database {
   }
   static getYesterdayKey() {
     return Database.getDayKey(Date.now() - millisInADay);
+  }
+  static getKeyNDaysBefore(now, n) {
+    return Database.getDayKey(now - (millisInADay * n));
   }
 
   validateTodo(todo) {

@@ -23,8 +23,7 @@ app.post('/todo', async (req, res) => {
     const list = await db.upsertTodo(todo);
     res.send({ list });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -35,8 +34,7 @@ app.delete('/todo', async (req, res) => {
     const list = await db.getTodoList(Database.getTodayKey());
     res.send({ list });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -53,8 +51,7 @@ app.get('/list', async (req, res) => {
     const list = await db.getTodoList(date);
     res.send({ list });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -66,8 +63,7 @@ app.post('/list/new', async (_req, res) => {
     const list = await db.getTodoList(Database.getTodayKey()); // excessive db call but it verifies that correct list is there
     res.send({ list });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -78,8 +74,7 @@ app.delete('/list', async (req, res) => {
     const list = await db.getTodoList(Database.getTodayKey());
     res.send({ list });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -89,8 +84,7 @@ app.get('/list/restore', async (req, res) => {
     const list = await db.restoreList(date);
     res.send({ list });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
   }
 });
 
@@ -105,8 +99,7 @@ app.get('/entropy', async (_req, res) => {
     const { meditate1, meditate2, exercise } = result;
     res.send({ meditate1, meditate2, exercise });
   } catch(error) {
-      console.error(error);
-    res.status(500).send({ error: error.message });
+      handleError(res, error);
   }
 });
 
@@ -117,19 +110,27 @@ app.post('/entropy', async (req, res) => {
     const { meditate1, meditate2, exercise } = await db.getEntropyTasks(Database.getTodayKey());
     res.status(200).send({ meditate1, meditate2, exercise });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
   }
 });
 
 // Stats Fetching
 app.get('/stats/week/todos', async (_req, res) => {
   try {
+    console.debug('Getting week\'s todo stats');
     // Memoize this in 'aggregates' db collection
-    res.send({ stats: await db.generatePreviousWeekStats() });
+    res.send({ stats: await db.generatePreviousWeekTodoStats() });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: error.message });
+    handleError(res, error);
+  }
+});
+
+app.get('/stats/week/entropy', async (_req, res) => {
+  try {
+    console.debug('Getting week\'s entropy stats');
+    res.send({ stats: await db.generatePreviousWeekEntropyStats() });
+  } catch (error) {
+    handleError(res, error);
   }
 });
 
@@ -144,9 +145,8 @@ app.post('/blockchain/login', (req, res) => {
     }
     fromAddress = address;
     res.send({ address: fromAddress });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: err.message });
+  } catch (error) {
+    handleError(res, error)
   }
 });
 
@@ -156,9 +156,8 @@ app.get('/blockchain/listHash', async(req, res) => {
     assert(Database.dateKeyRegex.test(date));
     let data = await todoContract.listHashes(fromAddress, date);
     res.send({ hash: data });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: err.message });
+  } catch (error) {
+    handleError(res, error);
   }
 });
 
@@ -173,9 +172,8 @@ app.post('/blockchain/saveListHash', async (_req, res) => {
     console.log('saving ', JSON.stringify(list));
     todoContract.saveListHash(fromAddress, list, todayKey);
     res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: err.message });
+  } catch (error) {
+    handleError(res, error);
   }
 });
 
@@ -211,4 +209,9 @@ function parseBool(string) {
     return false;
   }
   throw new Error(`String was neither "true" nor "false"; it was "${lowercase}"`);
+}
+
+function handleError(res, error) {
+  console.error(error);
+  res.status(500).send({ error: error.message });
 }
