@@ -12,31 +12,11 @@ export default class Stats extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/stats/week/todos')
+    fetch('/stats/week')
       .then(res => res.json())
       .then(body => {
         if (body.stats) {
-          const week = this.state;
-          week.todo = body.stats.todo;
-          // yikes, see below
-          week.startDate = body.stats.startDate;
-          week.startDate = body.stats.endDate;
-          this.setState({ week });
-        } else if (body.error) {
-          throw new Error(body.error);
-        }
-      })
-      .catch(err => console.error('Error fetching statistics', err));
-      fetch('/stats/week/entropy')
-      .then(res => res.json())
-      .then(body => {
-        if (body.stats) {
-          const { week } = this.state;
-          // yikes, see above
-          week.startDate = body.stats.startDate;
-          week.startDate = body.stats.endDate;
-          week.entropy = body.stats.entropy;
-          this.setState({ week });
+          this.setState({ week: body.stats });
         } else if (body.error) {
           throw new Error(body.error);
         }
@@ -59,27 +39,27 @@ export default class Stats extends React.Component {
 
   render() {
     const { week } = this.state;
-    const { todo, entropy } = week;
-    const needPercent = todo ? this.colorCodedPercent(todo.need.completed, todo.need.total) : 'loading...';
-    const needWantPercent = todo ? this.colorCodedPercent(todo.needWant.completed, todo.needWant.total) : 'loading...';
-    const meditatePercent = entropy ? this.colorCodedPercent(entropy.meditate.completed, entropy.meditate.total) : 'loading...';
-    const exercisePercent = entropy ? this.colorCodedPercent(entropy.exercise.completed, entropy.exercise.total) : 'loading...';
+    const { todoStats, entropyStats } = week;
+    const needPercent = todoStats ? this.colorCodedPercent(todoStats.need.completed, todoStats.need.total) : 'loading...';
+    const needWantPercent = todoStats ? this.colorCodedPercent(todoStats.needWant.completed, todoStats.needWant.total) : 'loading...';
+    const meditatePercent = entropyStats ? this.colorCodedPercent(entropyStats.meditate.completed, entropyStats.meditate.total) : 'loading...';
+    const exercisePercent = entropyStats ? this.colorCodedPercent(entropyStats.exercise.completed, entropyStats.exercise.total) : 'loading...';
     return(
       <div className='stats'>
         <h2>Stats</h2>
-        {todo ?
+        {todoStats ?
           <div className='week-stats'>
             <h3>Last 7 Days</h3>
             <div>Week: {week.startDate} to {week.endDate}</div>
-            <div>Need: {todo.need.completed} of {todo.need.total} &nbsp;&nbsp;{needPercent}</div>
-            <div>Need & Want: {todo.needWant.completed} of {todo.needWant.total} &nbsp;&nbsp;{needWantPercent}</div>
-            <div>Want: {todo.want.completed} of {todo.want.total}</div>
-            <div>Neither: {todo.neither.completed} of {todo.neither.total}</div>
+            <div>Need: {todoStats.need.completed} of {todoStats.need.total} &nbsp;&nbsp;{needPercent}</div>
+            <div>Need & Want: {todoStats.needWant.completed} of {todoStats.needWant.total} &nbsp;&nbsp;{needWantPercent}</div>
+            <div>Want: {todoStats.want.completed} of {todoStats.want.total}</div>
+            <div>Neither: {todoStats.neither.completed} of {todoStats.neither.total}</div>
           </div> : null}
-        {entropy ?
+        {entropyStats ?
           <div>
-            <div>Meditation: {entropy.meditate.completed} of {entropy.meditate.total} &nbsp;&nbsp;{meditatePercent}</div>
-            <div>Exercise: {entropy.exercise.completed} of {entropy.exercise.total} &nbsp;&nbsp;{exercisePercent}</div>
+            <div>Meditation: {entropyStats.meditate.completed} of {entropyStats.meditate.total} &nbsp;&nbsp;{meditatePercent}</div>
+            <div>Exercise: {entropyStats.exercise.completed} of {entropyStats.exercise.total} &nbsp;&nbsp;{exercisePercent}</div>
           </div> : null}
       </div>
     );

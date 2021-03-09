@@ -115,20 +115,13 @@ app.post('/entropy', async (req, res) => {
 });
 
 // Stats Fetching
-app.get('/stats/week/todos', async (_req, res) => {
+app.get('/stats/week/', async (_req, res) => {
   try {
-    console.debug('Getting week\'s todo stats');
+    console.debug('Getting week\'s stats');
     // Memoize this in 'aggregates' db collection
-    res.send({ stats: await db.generatePreviousWeekTodoStats() });
-  } catch (error) {
-    handleError(res, error);
-  }
-});
-
-app.get('/stats/week/entropy', async (_req, res) => {
-  try {
-    console.debug('Getting week\'s entropy stats');
-    res.send({ stats: await db.generatePreviousWeekEntropyStats() });
+    const stats = await db.getPreviousWeekStats();
+    console.log(stats);
+    res.send({ stats });
   } catch (error) {
     handleError(res, error);
   }

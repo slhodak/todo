@@ -17,7 +17,6 @@ export default class OpposeEntropy extends React.Component {
     fetch('/entropy')
     .then(res => res.json())
     .then(data => {
-      console.log(data);
       const { meditate1, meditate2, exercise } = data;
       this.setState({ meditate1, meditate2, exercise });
     })

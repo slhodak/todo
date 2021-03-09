@@ -182,75 +182,52 @@ module.exports = class Database {
 
   // Statistics Operations
 
-  async generatePreviousWeekEntropyStats() {
+  async getPreviousWeekStats() {
     const now = Date.now();
+    const days = [];
+    for (let i = 7; i > 0; i--) {
+      days.push(Database.getKeyNDaysBefore(now, i));
+    }
+    // memoize these
+    let entropyStats = await this.generateEntropyStatsFor(days);
+    let todoStats = await this.generateTodoStatsFor(days);
+    return {
+      type: "week",
+      startDate: days[0],
+      endDate: days[6],
+      entropyStats: entropyStats,
+      todoStats: todoStats
+    };
+  }
+
+  async generateEntropyStatsFor(days) {
     // from 8 days ago to 1 day ago; last week ended yesterday (Sunday), today is Monday
     let tasks = [];
-    for (let i = 1; i < 8; i++ ) {
-      tasks.push(await this.getEntropyTasks(Database.getKeyNDaysBefore(now, i)));
+    for (let i = 0; i < days.length; i++) {
+      tasks.push(await this.getEntropyTasks(days[i]));
     }
-    // include this metadata better, in a less-bound way
-    const entropy = {
-      meditate: {
-        completed: 0,
-        total: 7
-      },
-      exercise: {
-        completed: 0,
-        total: 7
-      }
-    };
+    const entropyStats = Database.blankEntropyStats;
     // add up all the meditate1, meditate2, and exercises in the days found
     for (let i = 0; i < tasks.length; i++) {
       if (!tasks[i]) {
         continue;
       }
-      if (tasks[i].meditate1)  {
-        entropy.meditate.completed += 1;
-      }
-      if (tasks[i].meditate2)  {
-        entropy.meditate.completed += 1;
-      }
-      if (tasks[i].exercise) {
-        entropy.exercise.completed += 1;
-      }
+      entropyStats.meditate.completed += tasks[i].meditate1 ? 1 : 0;
+      entropyStats.meditate.completed += tasks[i].meditate2 ? 1 : 0;
+      entropyStats.exercise.completed += tasks[i].exercise ? 1 : 0;
     }
-    return {
-      type: "entropy",
-      startDate: Database.getKeyNDaysBefore(now, 8),
-      endDate: Database.getKeyNDaysBefore(now, 1),
-      entropy: entropy
-    };
+    return entropyStats;
   }
-
-  // Run once a week (currently runs every page load...)
-  async generatePreviousWeekTodoStats() {
+  
+  // Run once a week (currently runs every page load)
+  async generateTodoStatsFor(days) {
     // sum completed and total tasks of all days in week
-    const now = Date.now();
     // get lists for every day in the week
     let lists = [];
-    for (let i = 1; i < 8; i++ ) {
-      lists.push(await this.getTodoList(Database.getKeyNDaysBefore(now, i)));
+    for (let i = 0; i < days.length; i++) {
+      lists.push(await this.getTodoList(days[i]));
     }
-    // include this metadata better, in a less-bound way
-    const todo = {
-      need: {
-        completed: 0,
-        total: 0
-      },
-      needWant: {
-        completed: 0,
-        total: 0
-      },
-      want: {
-        completed: 0,
-        total: 0
-      },
-      neither: {
-        completed: 0,
-        total: 0
-      }
-    };
+    const todoStats = Database.blankTodoStats;
     // ratings go from -2 to 1, but here go from 0 to 3
     let zeroIndexedRatings = ['neither', 'want', 'needWant', 'need'];
     // count all tasks completed and totals
@@ -261,28 +238,13 @@ module.exports = class Database {
       let { todos } = lists[i];
       for (let i = 0; i < todos.length; i++) {
         let type = zeroIndexedRatings[todos[i].rating + 2];
-        todo[type].total += 1;
+        todoStats[type].total += 1;
         if (todos[i].complete === true) {
-          todo[type].completed += 1; 
+          todoStats[type].completed += 1; 
         }
       }
     }
-    return {
-      type: "week",
-      startDate: Database.getKeyNDaysBefore(now, 8),
-      endDate: Database.getKeyNDaysBefore(now, 1),
-      todo: todo
-    }; // write to db
-  }
-
-  // Run once a month
-  async generatePreviousMonthStats() {
-    // sum completed and total tasks of all days in month
-  }
-
-  // Run once a year
-  async generatePreviousYearStats() {
-    // sum stats of all months of year
+    return todoStats;
   }
 
   // Utils
@@ -300,6 +262,36 @@ module.exports = class Database {
   static getKeyNDaysBefore(now, n) {
     return Database.getDayKey(now - (millisInADay * n));
   }
+
+  static blankTodoStats = {
+    need: {
+      completed: 0,
+      total: 0
+    },
+    needWant: {
+      completed: 0,
+      total: 0
+    },
+    want: {
+      completed: 0,
+      total: 0
+    },
+    neither: {
+      completed: 0,
+      total: 0
+    }
+  };
+
+  static blankEntropyStats = {
+    meditate: {
+      completed: 0,
+      total: 7
+    },
+    exercise: {
+      completed: 0,
+      total: 7
+    }
+  };
 
   validateTodo(todo) {
     assert.strictEqual(typeof todo.description, 'string');
