@@ -89,6 +89,7 @@ app.get('/list/restore', async (req, res) => {
 });
 
 // Entropy Opposition
+
 app.get('/entropy', async (_req, res) => {
   try {
     let result = await db.getEntropyTasks(Database.getTodayKey());
@@ -115,12 +116,12 @@ app.post('/entropy', async (req, res) => {
 });
 
 // Stats Fetching
-app.get('/stats/week/', async (_req, res) => {
+
+app.get('/stats/week', async (_req, res) => {
   try {
     console.debug('Getting week\'s stats');
     // Memoize this in 'aggregates' db collection
     const stats = await db.getPreviousWeekStats();
-    console.log(stats);
     res.send({ stats });
   } catch (error) {
     handleError(res, error);

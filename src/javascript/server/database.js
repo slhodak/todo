@@ -1,3 +1,4 @@
+const { cloneDeep } = require('lodash');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const url = 'mongodb://127.0.0.1:27017';
@@ -158,6 +159,7 @@ module.exports = class Database {
   }
 
   // OpposeEntropy Operations
+
   async initEntropyTasks(dateKey) {
     assert(Database.dateKeyRegex.test(dateKey));
     console.debug('Initializing entropy tasks');
@@ -167,7 +169,7 @@ module.exports = class Database {
 
   async getEntropyTasks(dateKey) {
     assert(Database.dateKeyRegex.test(dateKey));
-    console.debug('Getting entropy tasks');
+    console.debug('Getting entropy tasks for', dateKey);
     return await this.query(this.opposeEntropyCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
@@ -188,6 +190,7 @@ module.exports = class Database {
     for (let i = 7; i > 0; i--) {
       days.push(Database.getKeyNDaysBefore(now, i));
     }
+    console.debug('Getting stats for days', days);
     // memoize these
     let entropyStats = await this.generateEntropyStatsFor(days);
     let todoStats = await this.generateTodoStatsFor(days);
@@ -206,7 +209,7 @@ module.exports = class Database {
     for (let i = 0; i < days.length; i++) {
       tasks.push(await this.getEntropyTasks(days[i]));
     }
-    const entropyStats = Database.blankEntropyStats;
+    const entropyStats = cloneDeep(Database.blankEntropyStats);
     // add up all the meditate1, meditate2, and exercises in the days found
     for (let i = 0; i < tasks.length; i++) {
       if (!tasks[i]) {
@@ -227,7 +230,7 @@ module.exports = class Database {
     for (let i = 0; i < days.length; i++) {
       lists.push(await this.getTodoList(days[i]));
     }
-    const todoStats = Database.blankTodoStats;
+    const todoStats = cloneDeep(Database.blankTodoStats);
     // ratings go from -2 to 1, but here go from 0 to 3
     let zeroIndexedRatings = ['neither', 'want', 'needWant', 'need'];
     // count all tasks completed and totals
