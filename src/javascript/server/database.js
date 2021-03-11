@@ -1,4 +1,3 @@
-const { cloneDeep } = require('lodash');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const url = 'mongodb://127.0.0.1:27017';
@@ -209,7 +208,7 @@ module.exports = class Database {
     for (let i = 0; i < days.length; i++) {
       tasks.push(await this.getEntropyTasks(days[i]));
     }
-    const entropyStats = cloneDeep(Database.blankEntropyStats);
+    const entropyStats = Database.blankEntropyStatsFor(7);
     // add up all the meditate1, meditate2, and exercises in the days found
     for (let i = 0; i < tasks.length; i++) {
       if (!tasks[i]) {
@@ -221,7 +220,7 @@ module.exports = class Database {
     }
     return entropyStats;
   }
-  
+
   // Run once a week (currently runs every page load)
   async generateTodoStatsFor(days) {
     // sum completed and total tasks of all days in week
@@ -230,7 +229,7 @@ module.exports = class Database {
     for (let i = 0; i < days.length; i++) {
       lists.push(await this.getTodoList(days[i]));
     }
-    const todoStats = cloneDeep(Database.blankTodoStats);
+    const todoStats = Database.blankTodoStats();
     // ratings go from -2 to 1, but here go from 0 to 3
     let zeroIndexedRatings = ['neither', 'want', 'needWant', 'need'];
     // count all tasks completed and totals
@@ -266,33 +265,37 @@ module.exports = class Database {
     return Database.getDayKey(now - (millisInADay * n));
   }
 
-  static blankTodoStats = {
-    need: {
-      completed: 0,
-      total: 0
-    },
-    needWant: {
-      completed: 0,
-      total: 0
-    },
-    want: {
-      completed: 0,
-      total: 0
-    },
-    neither: {
-      completed: 0,
-      total: 0
+  static blankTodoStats() {
+    return {
+      need: {
+        completed: 0,
+        total: 0
+      },
+      needWant: {
+        completed: 0,
+        total: 0
+      },
+      want: {
+        completed: 0,
+        total: 0
+      },
+      neither: {
+        completed: 0,
+        total: 0
+      }
     }
   };
 
-  static blankEntropyStats = {
-    meditate: {
-      completed: 0,
-      total: 7
-    },
-    exercise: {
-      completed: 0,
-      total: 7
+  static blankEntropyStatsFor(days) {
+    return {
+      meditate: {
+        completed: 0,
+        total: days * 2
+      },
+      exercise: {
+        completed: 0,
+        total: days
+      }
     }
   };
 
