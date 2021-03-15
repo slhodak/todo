@@ -3,16 +3,17 @@ import '../style.css';
 
 export default class Stats extends React.Component {
   constructor(props) {
-    super(props);
+    super();
     this.state = {
       week: {}
     };
 
+    this.host = props.host;
     this.colorCodedPercent = this.colorCodedPercent.bind(this);
   }
 
   componentDidMount() {
-    fetch('/stats/week')
+    fetch(`${this.host}/stats/week`)
       .then(res => res.json())
       .then(body => {
         if (body.stats) {

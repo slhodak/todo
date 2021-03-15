@@ -2,7 +2,7 @@ import React from 'react';
 import '../style.css';
 
 export default class Blockchain extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       addressInput: '',
@@ -11,6 +11,8 @@ export default class Blockchain extends React.Component {
       foundListHash: '',
       dateKeySearched: ''
     };
+
+    this.host = props.host;
     this.handleAddressChange = this.handleAddressChange.bind(this);
     this.loginToBlockchain = this.loginToBlockchain.bind(this);
     this.saveHashToBlockchain = this.saveHashToBlockchain.bind(this);
@@ -23,7 +25,7 @@ export default class Blockchain extends React.Component {
   }
   loginToBlockchain() {
     const { addressInput } = this.state;
-    fetch(`/blockchain/login?address=${addressInput}`, { method: 'POST' })
+    fetch(`${this.host}/blockchain/login?address=${addressInput}`, { method: 'POST' })
     .then(res => res.json())
     .then(data => {
       if (data.error) {
@@ -36,7 +38,7 @@ export default class Blockchain extends React.Component {
     this.setState({ addressInput: '' });
   }
   saveHashToBlockchain() {
-    fetch('/blockchain/saveListHash', { method: 'POST' })
+    fetch(`${this.host}/blockchain/saveListHash`, { method: 'POST' })
     .catch(err => console.error('Error clearing list', err));
   }
   handleDateKeyChange(e) {
@@ -44,7 +46,7 @@ export default class Blockchain extends React.Component {
   }
   getListHash() {
     const { dateKeyToSearch } = this.state;
-    fetch(`/blockchain/listHash?date=${dateKeyToSearch}`)
+    fetch(`${this.host}/blockchain/listHash?date=${dateKeyToSearch}`)
     .then(res => res.json())
     .then(data => {
       if (data.error) {

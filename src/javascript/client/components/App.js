@@ -5,6 +5,8 @@ import Stats from './Stats';
 import Blockchain from './Blockchain';
 import '../style.css';
 
+const env = process.env.ENV;
+
 export default class App extends React.Component {
   constructor() {
     super();
@@ -15,6 +17,7 @@ export default class App extends React.Component {
       rating: 0,
       complete: false
     };
+    this.host = env === 'development' ? 'http://localhost:3000' : '';
     this.state = {
       todos: [],
       newTodo: Object.assign({}, this.blankTodo)
@@ -36,7 +39,7 @@ export default class App extends React.Component {
     return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
   }
   getList(date) {
-    fetch(`/list?date=${date}`, {
+    fetch(`${this.host}/list?date=${date}`, {
       headers: [
         [ 'Accept', 'application/json' ]
       ]
@@ -80,7 +83,7 @@ export default class App extends React.Component {
     this.upsertTodo(todo);
   }
   upsertTodo(todo) {
-    fetch('/todo', {
+    fetch(`${this.host}/todo`, {
       method: 'POST',
       headers: [
         [ 'Content-type', 'application/json' ]
@@ -94,7 +97,7 @@ export default class App extends React.Component {
     .catch(err => console.error(`Error adding todo: ${err}`));
   }
   deleteTodo(description) {
-    fetch(`/todo?description=${description}`, { method: 'DELETE' })
+    fetch(`${this.host}/todo?description=${description}`, { method: 'DELETE' })
     .then(res => {
       this.updateListInState(res);
     })
@@ -102,13 +105,13 @@ export default class App extends React.Component {
   }
   resetList() {
     console.log('Resetting list');
-    fetch('/list/new', { method: 'POST' })
+    fetch(`${this.host}/list/new`, { method: 'POST' })
     .then(res => this.updateListInState(res))
     .catch(err => console.error('Error resetting list', err));
   }
   restoreList() {
     console.log('Restoring list from backup, if any');
-    fetch(`/list/restore?date=${App.getTodayKey()}`)
+    fetch(`${this.host}/list/restore?date=${App.getTodayKey()}`)
     .then(res => this.updateListInState(res))
     .catch(err => console.error('Error restoring list', err));
   }
@@ -167,12 +170,12 @@ export default class App extends React.Component {
               <button onClick={this.resetList} className='resetList'>Reset List</button>
               <button onClick={this.restoreList} className='restore-list'>Restore List (Undo Erase or Reset)</button>
             </div>
-            <Blockchain />
-            <OpposeEntropy />
+            <Blockchain host={this.host} />
+            <OpposeEntropy host={this.host} />
           </div>
         </div>
         <div className='bottom-area'>
-          <Stats />
+          <Stats host={this.host} />
         </div>
       </div>
     )

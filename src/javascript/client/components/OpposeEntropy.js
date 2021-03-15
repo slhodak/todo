@@ -2,7 +2,7 @@ import React from 'react';
 import '../style.css';
 
 export default class OpposeEntropy extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       meditate1: false,
@@ -10,11 +10,12 @@ export default class OpposeEntropy extends React.Component {
       exercise: false
     };
 
+    this.host = props.host;
     this.updateEntropyTask = this.updateEntropyTask.bind(this);
   }
 
   componentDidMount() {
-    fetch('/entropy')
+    fetch(`${this.host}/entropy`)
     .then(res => res.json())
     .then(data => {
       const { meditate1, meditate2, exercise } = data;
@@ -26,7 +27,7 @@ export default class OpposeEntropy extends React.Component {
   updateEntropyTask(event) {
     const type = event.target.name;
     const change = event.target.checked;
-    fetch(`/entropy?type=${type}&change=${change}`, { method: 'POST' })
+    fetch(`${this.host}/entropy?type=${type}&change=${change}`, { method: 'POST' })
     .then(res => res.json())
     .then(data => this.setState({ [type]: data[type] }))
     .catch(error => console.error(error));
