@@ -6,6 +6,10 @@ html, input, button {
   font-weight: 300;
 }
 
+button {
+  border-color: rgb(225, 225, 225);
+}
+
 h1, h2, h3 {
   margin: 0px;
   padding: 0px;

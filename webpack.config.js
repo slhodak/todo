@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const dotenv = require('dotenv').config({path: __dirname + '/.env'});
+const env = require('dotenv').config({path: __dirname + '/.env'}).parsed;
 
 module.exports = {
   mode: 'development',
@@ -17,7 +17,7 @@ module.exports = {
   },
   plugins: [
     new webpack.EnvironmentPlugin({
-      'ENV': dotenv.ENV || 'development'
+      'ENV': env.ENV || 'development'
     })
   ]
 };

@@ -2,6 +2,7 @@ const assert = require('assert');
 const cron = require('node-cron');
 const express = require('express');
 const bodyParser = require('body-parser');
+const env = require('dotenv').config({path: __dirname + '/.env'}).parsed;
 const app = express();
 const Database = require('./database');
 const db = new Database();
@@ -173,8 +174,8 @@ app.post('/blockchain/saveListHash', async (_req, res) => {
 
 // General
 
-app.listen(3000, () => {
-  console.log('App listening on port 3000');
+app.listen(env.NODE_PORT, () => {
+  console.log(`App listening on port ${env.NODE_PORT}`);
 });
 
 // every day at 4am, create an empty list for today if it does not exist.

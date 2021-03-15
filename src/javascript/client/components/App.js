@@ -17,7 +17,7 @@ export default class App extends React.Component {
       rating: 0,
       complete: false
     };
-    this.host = env === 'development' ? 'http://localhost:3000' : '';
+    this.host = env === 'development' ? 'http://localhost:4635' : '';
     this.state = {
       todos: [],
       newTodo: Object.assign({}, this.blankTodo)
