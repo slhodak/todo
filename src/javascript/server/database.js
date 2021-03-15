@@ -33,13 +33,6 @@ module.exports = class Database {
 
   // Todo Item Operations
 
-  async getDaysIncompleteNeeds(dateKey) {
-    assert(Database.dateKeyRegex.test(dateKey));
-    const list = await this.getTodoList(Database.getYesterdayKey());
-    const { todos } = list;
-    return todos.filter(todo => todo.need && !todo.complete);
-  }
-
   async upsertTodo(newTodo) {
     console.log('Upserting todo', newTodo);
     const dateKey = Database.getTodayKey();
@@ -116,6 +109,16 @@ module.exports = class Database {
     return await this.query(this.listsCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
+  async getDaysIncompleteNeeds(dateKey) {
+    assert(Database.dateKeyRegex.test(dateKey));
+    const list = await this.getTodoList(Database.getYesterdayKey());
+    if (!list) { // if a whole day passes without a list, ?
+      return [];
+    }
+    const { todos } = list;
+    return todos.filter(todo => todo.need && !todo.complete);
+  }
+
   async upsertList(dateKey, todos) {
     assert(Database.dateKeyRegex.test(dateKey));
     // Backup every time, a new list might not be empty because it would include incomplete "need" items
@@ -183,9 +186,11 @@ module.exports = class Database {
 
   // Statistics Operations
 
+  // Todo: Memoize this
   async getPreviousWeekStats() {
     const now = Date.now();
     const days = [];
+    // from 7 days ago to 1 day ago, inclusive
     for (let i = 7; i > 0; i--) {
       days.push(Database.getKeyNDaysBefore(now, i));
     }
@@ -203,7 +208,6 @@ module.exports = class Database {
   }
 
   async generateEntropyStatsFor(days) {
-    // from 8 days ago to 1 day ago; last week ended yesterday (Sunday), today is Monday
     let tasks = [];
     for (let i = 0; i < days.length; i++) {
       tasks.push(await this.getEntropyTasks(days[i]));
@@ -221,10 +225,8 @@ module.exports = class Database {
     return entropyStats;
   }
 
-  // Run once a week (currently runs every page load)
   async generateTodoStatsFor(days) {
     // sum completed and total tasks of all days in week
-    // get lists for every day in the week
     let lists = [];
     for (let i = 0; i < days.length; i++) {
       lists.push(await this.getTodoList(days[i]));

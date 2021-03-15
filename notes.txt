@@ -144,3 +144,9 @@ together:
 
 curl localhost:8545 --data '{"jsonrpc":"2.0","method":"eth_call","params":[{"from":"0x0088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6","to":"0x7F8090faC302F69e739CEDD86824845344890959","data":"0x604e2184000000000000000000000000000000000000000000000088Ba31d9A62f47b302cF9F8aB0cCd9108a2fd6000000000000323032312d312d31310000000000000000000000000000000000"},"latest"],"id":1}'
 
+
+### Guide
+
+"We don't recommend using the Weekly Planner to create time-blocks until you are comfortable with the responsibility of the (Daily) Todo List. Once you are doing at least 75% of your "need-only" tasks per week, the Weekly Planner is a good way to schedule yourself time to do the "need-want" tasks that you consider important, but not urgent, and may have a tendency to keep putting off."
+
+
