@@ -179,7 +179,7 @@ app.listen(env.NODE_PORT, () => {
 });
 
 // every day at 4am, create an empty list for today if it does not exist.
-cron.schedule('* 4 * * *', async () => {
+cron.schedule('* 0 * * *', async () => {
   const todayKey = Database.getTodayKey();
   const todayList = await db.getTodoList(todayKey);
   if (todayList === null) {
