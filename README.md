@@ -16,7 +16,7 @@ This application will auto-sort your To-Do's based on the two Need/Want criteria
 
 The __Stats__ section tracks your rolling 7-day  completion percentage in both categories for which Need is true.
 
-Two items are persistent every day: Meditate and Exercise. These are referred to in the code as __Opposing Entropy__ A day is considered Perfect with respect to these if you meditate twice and exercise once.
+Two items are persistent every day: Meditate and Exercise. These are referred to in the code as __Opposing Entropy__ A day is considered perfect with respect to these if you meditate twice and exercise once.
 
 In general the goal is not 100% completion, because that would encourage gaming the system: intentionally omitting things from the list, splitting one important task into several to pump up your stats, etc. Just let it be an extension of your memory. An item is on the list not only to remind you to do it, but to let you feel free to focus on the highest-priority things without worrying that you'll miss out on anything else you were hoping to do.
 
