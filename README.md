@@ -14,7 +14,7 @@ Things you want to do probably exist along two axes: Want to, and Need to. If yo
 # Description
 This application will auto-sort your To-Do's based on the two Need/Want criteria, where Need-Only always goes to the top, Need-Want is next, Want-Only comes after that, and Neither is last.
 
-The __Stats__ section tracks your rolling 7-day average for completion percentage for both categories for which Need is true.
+The __Stats__ section tracks your rolling 7-day  completion percentage in both categories for which Need is true.
 
 Two items are persistent every day: Meditate and Exercise. These are referred to in the code as __Opposing Entropy__ A day is considered Perfect with respect to these if you meditate twice and exercise once.
 
