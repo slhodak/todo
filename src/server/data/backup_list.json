@@ -60,13 +60,6 @@
                 "complete": false
             },
             {
-                "description": "todo: blockchain read",
-                "need": false,
-                "want": true,
-                "rating": -1,
-                "complete": false
-            },
-            {
                 "description": "study/practice multithreading",
                 "need": false,
                 "want": true,

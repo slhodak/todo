@@ -147,21 +147,6 @@ body {
   background-color: rgb(136, 198, 232);
 }
 
-/* Blockchain Area */
-.blockchain {
-  margin-top: 10px;
-}
-
-.logged-in-address, .found-list-hash {
-  margin-top: 4px;
-  word-wrap: break-word;
-  background-color: black;
-  border-radius: 2px;
-  color: #00ff41;
-  font-family: monospace;
-  padding: 2px;
-}
-
 /* Meditate & Exercise Area */
 .oppose-entropy {
   display: flex;

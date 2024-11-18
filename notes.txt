@@ -29,27 +29,6 @@ CRUD
     changing description
   creating new list at day end (4am) (see ***)
 
-ethereum
-  no ruby ethereum, switch everything to js
-  store, on-chain, a hash of the day's list at EOD
-  include methods to verify whether EOD list in db matches hash on chain
-    forbid alteration of list in DB after EOD
-      what if it is changed? Well... it doesn't change present day values
-      except of score tracking. Say score tracking is also saved on-chain
-        Then past alterations to the score will be ignored
-        Calculate on-chain new score by adding previous to new but
-          Hash all old days in order + previous hash
-          Compare to hash of same on-chain
-            If different, use old score to add new day
-            If same, use local score to add new day... doesn't matter. same outcome
-            Just forgot local storage of score
-  What if all off-chain records, like trees, are lost?
-    You can be confident that on-chain state will not be changed w/o consensus but, don't know how it got to that
-    Don't forget about DECRYPTING the hash with saved key!
-      Instead of prev day and new day as 2 keys, just do curr day and stored key. Even symm key.
-  save hash of to-do to blockchain
-      Finish the todo itself before worrying about blockchain component
-
 
 server should not be stateful
   caching in front of db is separate

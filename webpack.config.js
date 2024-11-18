@@ -4,7 +4,7 @@ const env = require('dotenv').config({path: __dirname + '/.env'}).parsed;
 
 module.exports = {
   mode: 'development',
-  entry: path.resolve('src/javascript/client/client.js'),
+  entry: path.resolve('src/client/client.js'),
   output: {
     path: path.resolve('public'),
     filename: 'bundle.js'
