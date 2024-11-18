@@ -1,4 +1,3 @@
-const assert = require('assert');
 const cron = require('node-cron');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -6,7 +5,6 @@ const env = require('dotenv').config({path: __dirname + '/.env'}).parsed;
 const app = express();
 const Database = require('./database');
 const db = new Database();
-let fromAddress = '';
 
 app.use(express.static('public'));
 app.use('/', (req, _res, next) => {
@@ -55,12 +53,16 @@ app.get('/list', async (req, res) => {
   }
 });
 
+async function createNewList() {
+  const yesterdaysIncomplete = await db.getDaysIncompleteAll(Database.getYesterdayKey());
+  // Initialize a list with all the incomplete items of yesterday
+  await db.upsertList(Database.getTodayKey(), yesterdaysIncomplete);
+  return await db.getTodoList(Database.getTodayKey()); // excessive db call but it verifies that correct list is there
+};
+
 app.post('/list/new', async (_req, res) => {
   try {
-    const yesterdaysIncompleteNeeds = await db.getDaysIncompleteNeeds(Database.getYesterdayKey());
-    // Initialize a list with the incomplete "need" items of yesterday
-    const _result = await db.upsertList(Database.getTodayKey(), yesterdaysIncompleteNeeds);
-    const list = await db.getTodoList(Database.getTodayKey()); // excessive db call but it verifies that correct list is there
+    const list = await createNewList();
     res.send({ list });
   } catch (error) {
     handleError(res, error);
@@ -134,16 +136,17 @@ app.listen(env.NODE_PORT, () => {
   console.log(`App listening on port ${env.NODE_PORT}`);
 });
 
-// every day at 4am, create an empty list for today if it does not exist.
-cron.schedule('* 0 * * *', async () => {
-  const todayKey = Database.getTodayKey();
-  const todayList = await db.getTodoList(todayKey);
-  if (todayList === null) {
-    const yesterdayList = await db.getTodoList(Database.getYesterdayKey());
-    todoContract.saveListHash(fromAddress, yesterdayList, todayKey);
-    console.log(`Today, ${todayKey}, has no list; creating one.`);
-    const result = await db.upsertList(getTodayKey, []);
-    console.log(result.result);
+// every day at 4am, create a list for today if none exists
+// include all the incomplete items from yesterday
+cron.schedule('0 4 * * *', async () => {
+  try {
+    const todayKey = Database.getTodayKey();
+    const todayList = await db.getTodoList(todayKey);
+    if (todayList === null) {
+      await createNewList()
+    }
+  } catch (error) {
+    console.error('Error in cron job:', error);
   }
 });
 

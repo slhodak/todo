@@ -109,14 +109,14 @@ module.exports = class Database {
     return await this.query(this.listsCollection, async collection => await collection.findOne({ date: { $eq: dateKey } }));
   }
 
-  async getDaysIncompleteNeeds(dateKey) {
+  async getDaysIncompleteAll(dateKey) {
     assert(Database.dateKeyRegex.test(dateKey));
     const list = await this.getTodoList(Database.getYesterdayKey());
     if (!list) { // if a whole day passes without a list, ?
       return [];
     }
     const { todos } = list;
-    return todos.filter(todo => todo.need && !todo.complete);
+    return todos.filter(todo => !todo.complete);
   }
 
   async upsertList(dateKey, todos) {
