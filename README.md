@@ -1,10 +1,21 @@
 ![](todo-screencap.png)
 # Set up
+### Prerequisites
+#### MongoDB
+https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/
+1. `brew tap mongodb/brew`
+2. `brew update`
+3. `brew install mongodb-community@8.0`
+4. `mongosh` to open the mongo shell
+5. `use todo` to create the "todo" database  
+Exit the mongo shell
+
+### Build & Serve
 1. `npm install`  
 2. `npm run build-frontend`  
 3. `npm run server-start`  
 
-## Run
+### Run
 4. http://localhost:4635
 
 # Why
