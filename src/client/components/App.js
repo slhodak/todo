@@ -2,7 +2,6 @@ import React from 'react';
 import Todo from './Todo';
 import OpposeEntropy from './OpposeEntropy';
 import Stats from './Stats';
-import Blockchain from './Blockchain';
 import '../style.css';
 
 const env = process.env.ENV;
@@ -170,7 +169,6 @@ export default class App extends React.Component {
               <button onClick={this.resetList} className='resetList'>Reset List</button>
               <button onClick={this.restoreList} className='restore-list'>Restore List (Undo Erase or Reset)</button>
             </div>
-            <Blockchain host={this.host} />
             <OpposeEntropy host={this.host} />
           </div>
         </div>
