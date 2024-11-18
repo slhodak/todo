@@ -6,7 +6,6 @@ const env = require('dotenv').config({path: __dirname + '/.env'}).parsed;
 const app = express();
 const Database = require('./database');
 const db = new Database();
-const todoContract = new (require('./blockchain'))();
 let fromAddress = '';
 
 app.use(express.static('public'));
@@ -124,49 +123,6 @@ app.get('/stats/week', async (_req, res) => {
     // Memoize this in 'aggregates' db collection
     const stats = await db.getPreviousWeekStats();
     res.send({ stats });
-  } catch (error) {
-    handleError(res, error);
-  }
-});
-
-// Blockchain Operations
-
-app.post('/blockchain/login', (req, res) => {
-  try {
-    const { address } = req.query;
-    if (address.length != 42 || address.substr(0, 2) != '0x') {
-      res.status(400).send({ error: `Received invalid address ${address}` });
-      return;
-    }
-    fromAddress = address;
-    res.send({ address: fromAddress });
-  } catch (error) {
-    handleError(res, error)
-  }
-});
-
-app.get('/blockchain/listHash', async(req, res) => {
-  try {
-    const { date } = req.query;
-    assert(Database.dateKeyRegex.test(date));
-    let data = await todoContract.listHashes(fromAddress, date);
-    res.send({ hash: data });
-  } catch (error) {
-    handleError(res, error);
-  }
-});
-
-app.post('/blockchain/saveListHash', async (_req, res) => {
-  try {
-    if (fromAddress.length === 0) {
-      res.status(400).send('No address to save from; please log in.');
-      return;
-    }
-    const todayKey = Database.getTodayKey(); // "2021-2-1"
-    const list = await db.getTodoList(todayKey);
-    console.log('saving ', JSON.stringify(list));
-    todoContract.saveListHash(fromAddress, list, todayKey);
-    res.sendStatus(200);
   } catch (error) {
     handleError(res, error);
   }
