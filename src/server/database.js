@@ -293,7 +293,7 @@ module.exports = class Database {
     return {
       meditate: {
         completed: 0,
-        total: days * 2
+        total: days
       },
       exercise: {
         completed: 0,
