@@ -17,7 +17,7 @@ module.exports = class Database {
   async query(collectionName, method) {
     let client;
     try {
-      client = await MongoClient.connect(url, { useUnifiedTopology: true });
+      client = await MongoClient.connect(url);
       assert.notStrictEqual(null, client);
       const db = client.db(this.dbName);
       // console.log(`Connected to db '${db.databaseName}' for method '${method}'`);
