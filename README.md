@@ -21,6 +21,9 @@ Exit the mongo shell
 # Why
 Things you want to do probably exist along two axes: Want to, and Need to. If you Need to do it, but don't Want to, then you should make sure to prioritize it, because you have no independent motivation to get it done. The rest you'll get to because you like it.
 
+### Notice on data integrity
+List items are preserved from day-to-day because the server will copy them from the previous day to the current day in the middle of the night (4am). If the server is not running for over a day, old list items will be lost.
+
 # Description
 This application will auto-sort your To-Do's based on the two Need/Want criteria, where Need-Only always goes to the top, Need-Want is next, Want-Only comes after that, and Neither is last.
 
