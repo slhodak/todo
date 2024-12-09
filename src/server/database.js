@@ -212,7 +212,8 @@ module.exports = class Database {
     for (let i = 0; i < days.length; i++) {
       tasks.push(await this.getEntropyTasks(days[i]));
     }
-    const entropyStats = Database.blankEntropyStatsFor(7);
+    // Only expect 5 days of exercise and meditation per week
+    const entropyStats = Database.blankEntropyStatsFor(5);
     // add up all the meditate1, meditate2, and exercises in the days found
     for (let i = 0; i < tasks.length; i++) {
       if (!tasks[i]) {
